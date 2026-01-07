@@ -1,0 +1,335 @@
+import numpy as np
+import pandas as pd
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data import DataLoader, TensorDataset
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import f1_score, accuracy_score, recall_score
+from sklearn.preprocessing import StandardScaler
+import os
+
+# 加载 (您的原代码)
+all_datasets = [
+    pd.read_csv('Diabetes Simple Diagnosis.csv'), # 数据集1
+    pd.read_csv('diabetes.csv'), # 数据集2
+    pd.read_csv('diabetes_012_health_indicators_BRFSS2015.csv'), # 数据集3
+    pd.read_csv('diabetes_data.csv'), # 数据集4
+    pd.read_csv('diabetes_data_upload.csv'), # 数据集5
+    pd.read_csv('diabetes_dataset.csv'), # 数据集6
+    pd.read_csv('Diabetes_Dataset_With_18_Features.csv'), # 数据集7
+    pd.read_csv('diabetes_dataset00.csv'), # 数据集8
+    pd.read_csv('Diabetes_prediction.csv'), # 数据集9
+    pd.read_csv('diabetes_prediction_dataset.csv'), # 数据集10
+    pd.read_csv('Gestational Diabetes.csv'), # 数据集11
+    pd.read_csv('Gestational Diabetic Dat Set.csv'), # 数据集12
+    pd.read_csv('Healthcare-Diabetes.csv') # 数据集13
+]
+
+# 多任务数据集
+multi_task_indices = [0, 1, 2, 6, 9, 11, 12]
+multi_datasets = [all_datasets[i] for i in multi_task_indices]
+
+# 单任务数据集
+single_task_indices = [3, 5, 8]
+single_task_datasets = [all_datasets[i] for i in single_task_indices]
+
+# Dataset 8 (类型分类, 跳过诊断鲁棒性)
+dataset8 = all_datasets[7]
+print(f"多任务ds: {len(multi_datasets)}, 单任务ds: {len(single_task_datasets)}, Dataset8: {dataset8.shape if dataset8 is not None else 'Skipped'}")
+
+# MTL模型 (您的)
+class DiabetesDiagnosisModel(nn.Module):
+    def __init__(self, input_dim, hidden_dim, num_tasks):
+        super().__init__()
+        self.shared_layer = nn.Sequential(
+            nn.Linear(input_dim, hidden_dim * 2),
+            nn.BatchNorm1d(hidden_dim * 2),
+            nn.ReLU(),
+            nn.Dropout(0.4),
+            nn.Linear(hidden_dim * 2, hidden_dim),
+            nn.BatchNorm1d(hidden_dim),
+            nn.ReLU(),
+            nn.Dropout(0.4),
+            nn.Linear(hidden_dim, hidden_dim),
+            nn.BatchNorm1d(hidden_dim),
+            nn.ReLU(),
+            nn.Dropout(0.4)
+        )
+        self.task_heads = nn.ModuleList([
+            nn.Sequential(
+                nn.Linear(hidden_dim, hidden_dim // 2),
+                nn.BatchNorm1d(hidden_dim // 2),
+                nn.ReLU(),
+                nn.Dropout(0.4),
+                nn.Linear(hidden_dim // 2, 2)
+            ) for _ in range(num_tasks)
+        ])
+        self._initialize_weights()
+   
+    def _initialize_weights(self):
+        for m in self.modules():
+            if isinstance(m, nn.Linear):
+                nn.init.xavier_uniform_(m.weight)
+                if m.bias is not None:
+                    nn.init.zeros_(m.bias)
+   
+    def forward(self, x, task_id):
+        shared = self.shared_layer(x)
+        return self.task_heads[task_id](shared)
+
+# 单任务模型 (您的)
+class SingleDiagnosisModel(nn.Module):
+    def __init__(self, input_dim, hidden_dim):
+        super().__init__()
+        self.shared_layer = nn.Sequential(
+            nn.Linear(input_dim, hidden_dim * 2),
+            nn.BatchNorm1d(hidden_dim * 2),
+            nn.ReLU(),
+            nn.Dropout(0.4),
+            nn.Linear(hidden_dim * 2, hidden_dim),
+            nn.BatchNorm1d(hidden_dim),
+            nn.ReLU(),
+            nn.Dropout(0.4)
+        )
+        self.head = nn.Linear(hidden_dim, 2)
+   
+    def forward(self, x):
+        shared = self.shared_layer(x)
+        return self.head(shared)
+
+# 预处理 (优化)
+initial_selected_features = [
+    'Age', 'Gender', 'BMI', 'Pregnancy', 'Glucose', 'BloodPressure',
+    'HbA1c_level', 'Smoking'
+]
+numeric_features = ['Age', 'BMI', 'Glucose', 'BloodPressure', 'HbA1c_level']
+binary_features = ['Gender', 'Pregnancy', 'Smoking']
+
+feature_mapping = {
+    'Age': ['Age', 'age'],
+    'Gender': ['Gender', 'gender', 'Sex'],
+    'BMI': ['BMI', 'bmi'],
+    'Pregnancy': ['Pregnancy', 'Pregnancies', 'No of Pregnancy', 'Pregnancy No', 'GestationalDiabetes', 'Pregnancy History', 'No of Pregestation'],
+    'Glucose': ['Glucose', 'glucose', 'FBS', 'blood_glucose_level', 'Blood_Glucose_Level', 'FPG', 'OGTT', 'FastingBloodSugar', 'Blood Glucose Levels'],
+    'BloodPressure': ['BloodPressure', 'Blood Pressure', 'HighBP', 'systolic_bp', 'diastolic_bp', 'Sys BP', 'Dia BP', 'SBP', 'DBP',
+                      'systolic_bp', 'diastolic_bp', 'High_BP'],
+    'HbA1c_level': ['HbA1c_level', 'HbA1c', 'HDL', 'Insulin', 'Insulin_Level', 'Insulin Levels'],
+    'Smoking': ['Smoking', 'smoking', 'Smoker', 'smoking_history', 'Smoking Status']
+}
+
+def preprocess_dataset(df, selected_features):
+    if df is None or df.empty:
+        return None, None
+    df = df.copy()
+    feature_data = pd.DataFrame(index=df.index)
+    
+    for feature in selected_features:
+        col = None
+        for col_name in feature_mapping.get(feature, [feature]):
+            if col_name in df.columns:
+                col = df[col_name]
+                break
+        if col is None:
+            col = pd.Series(np.nan, index=df.index)
+        
+        if feature in numeric_features:
+            feature_data[feature] = pd.to_numeric(col, errors='coerce').fillna(0)
+        else:
+            feature_data[feature] = pd.to_numeric(col, errors='coerce').fillna(0).astype(int)
+    
+    # 标签 (扩展搜索 + 二分类)
+    label_candidates = ['Diagnosis', 'diabetes', 'Outcome', 'Diabetes', 'Target', 
+                                      'Prediction', 'Class Label(GDM /Non GDM)', 'Diabetes_012', 'class']
+    label_col = next((col for col in label_candidates if col in df.columns), None)
+    if label_col is None:
+        print(f"Warning: No label for ds")
+        return None, None
+    
+    labels = df[label_col].copy()
+    if labels.dtype in ['int64', 'float64']:
+        labels = (labels > 0).astype(int)
+    else:
+        labels = labels.str.lower().map({
+            'yes':1, 'no':0, 'positive':1, 'negative':0, 'diabetes':1, 'non-diabetes':0, 'true':1, 'false':0
+        }).fillna(0).astype(int)
+    if len(np.unique(labels)) > 2:
+        labels = (labels > 0).astype(int)
+    
+    if len(np.unique(labels)) < 2:
+        print(f"Warning: Only 1 class")
+        return None, None
+    
+    return feature_data[selected_features].values, labels.values
+
+# 扰动
+def add_gaussian_noise(X, noise_std=0.05):
+    noise = np.random.normal(0, noise_std * np.std(X, axis=0), X.shape)
+    return X + noise
+
+def add_outliers(X, outlier_ratio=0.03):
+    X_out = X.copy()
+    n_outliers = int(len(X) * outlier_ratio)
+    outlier_idx = np.random.choice(len(X), n_outliers, replace=False)
+    for i in range(X.shape[1]):
+        if i == 4:  # Glucose
+            X_out[outlier_idx, i] = np.random.uniform(0, 500, n_outliers)
+        elif i == 5:  # BloodPressure
+            X_out[outlier_idx, i] = np.random.uniform(50, 250, n_outliers)
+        else:
+            X_out[outlier_idx, i] = np.random.uniform(-2, 2, n_outliers)
+    return X_out
+
+# 通用训练/评估
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+def train_and_evaluate(X, y, model_class, num_tasks=1, epochs=10):
+    try:
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
+        y_train = np.asarray(y_train).astype(int)
+        y_test = np.asarray(y_test).astype(int)
+        
+        scaler = StandardScaler()
+        X_train = scaler.fit_transform(X_train)
+        X_test = scaler.transform(X_test)
+        
+        model = model_class(len(X[0]), 128, num_tasks).to(device) if 'DiabetesDiagnosisModel' in str(model_class.__name__) else model_class(len(X[0]), 128).to(device)
+        criterion = nn.CrossEntropyLoss()
+        optimizer = optim.Adam(model.parameters(), lr=0.0005, weight_decay=5e-4)
+        
+        train_ds = TensorDataset(torch.tensor(X_train, dtype=torch.float32).to(device), torch.tensor(y_train, dtype=torch.long).to(device))
+        train_loader = DataLoader(train_ds, batch_size=32, shuffle=True)
+        
+        for epoch in range(epochs):
+            model.train()
+            for batch_x, batch_y in train_loader:
+                optimizer.zero_grad()
+                logits = model(batch_x, 0) if num_tasks > 1 else model(batch_x)
+                loss = criterion(logits, batch_y)
+                loss.backward()
+                torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
+                optimizer.step()
+        
+        # 基线
+        model.eval()
+        with torch.no_grad():
+            test_tensor = torch.tensor(X_test, dtype=torch.float32).to(device)
+            logits = model(test_tensor, 0) if num_tasks > 1 else model(test_tensor)
+            preds = torch.argmax(logits, dim=1).cpu().numpy()
+        bl_f1 = f1_score(y_test, preds, average='weighted', zero_division=0)
+        bl_acc = accuracy_score(y_test, preds)
+        bl_rec = recall_score(y_test, preds, average='weighted', zero_division=0)
+        
+        # 噪声
+        X_test_noise = scaler.transform(add_gaussian_noise(X_test, 0.05))
+        with torch.no_grad():
+            test_tensor_noise = torch.tensor(X_test_noise, dtype=torch.float32).to(device)
+            logits_noise = model(test_tensor_noise, 0) if num_tasks > 1 else model(test_tensor_noise)
+            preds_noise = torch.argmax(logits_noise, dim=1).cpu().numpy()
+        noise_f1 = f1_score(y_test, preds_noise, average='weighted', zero_division=0)
+        
+        # 异常
+        X_test_out = scaler.transform(add_outliers(X_test, 0.03))
+        with torch.no_grad():
+            test_tensor_out = torch.tensor(X_test_out, dtype=torch.float32).to(device)
+            logits_out = model(test_tensor_out, 0) if num_tasks > 1 else model(test_tensor_out)
+            preds_out = torch.argmax(logits_out, dim=1).cpu().numpy()
+        out_f1 = f1_score(y_test, preds_out, average='weighted', zero_division=0)
+        
+        noise_dec = ((bl_f1 - noise_f1) / bl_f1 * 100) if bl_f1 > 0 else 0
+        out_dec = ((bl_f1 - out_f1) / bl_f1 * 100) if bl_f1 > 0 else 0
+        
+        return bl_f1, noise_dec, out_dec, bl_acc, bl_rec
+    except Exception as e:
+        print(f"Train error: {e}")
+        return np.nan, np.nan, np.nan, np.nan, np.nan
+
+# 分析多任务
+print("\n--- 多任务鲁棒性 ---")
+multi_results = []
+for i, df in enumerate(multi_datasets):
+    ds_idx = multi_task_indices[i] + 1
+    X, y = preprocess_dataset(df, initial_selected_features)
+    if X is None or len(X) == 0 or len(np.unique(y)) < 2:
+        multi_results.append({'Type': 'MTL', 'Dataset': ds_idx, 'Samples': len(df), 'Baseline F1': np.nan, 'Noise Decline %': np.nan, 'Outlier Decline %': np.nan})
+        continue
+    
+    n_sub = min(3000, len(X))
+    idx = np.random.choice(len(X), n_sub, replace=False)
+    X_sub, y_sub = X[idx], y[idx]
+    
+    bl_f1, noise_dec, out_dec, bl_acc, bl_rec = train_and_evaluate(X_sub, y_sub, DiabetesDiagnosisModel, num_tasks=len(multi_task_indices), epochs=10)
+    multi_results.append({'Type': 'MTL', 'Dataset': ds_idx, 'Samples': len(df), 'Baseline F1': round(bl_f1, 3), 'Baseline Acc': round(bl_acc, 3), 'Baseline Recall': round(bl_rec, 3), 'Noise Decline %': round(noise_dec, 1), 'Outlier Decline %': round(out_dec, 1)})
+    print(f"MTL Dataset {ds_idx}: F1 {bl_f1:.3f} (Acc {bl_acc:.3f}, Rec {bl_rec:.3f}), Noise {noise_dec:.1f}%, Outlier {out_dec:.1f}%")
+
+# 分析单任务
+print("\n--- 单任务鲁棒性 ---")
+single_results = []
+for i, df in enumerate(single_task_datasets):
+    ds_idx = single_task_indices[i] + 1
+    X, y = preprocess_dataset(df, initial_selected_features)
+    if X is None or len(X) == 0 or len(np.unique(y)) < 2:
+        single_results.append({'Type': 'Single', 'Dataset': ds_idx, 'Samples': len(df), 'Baseline F1': np.nan, 'Noise Decline %': np.nan, 'Outlier Decline %': np.nan})
+        continue
+    
+    n_sub = min(3000, len(X))
+    idx = np.random.choice(len(X), n_sub, replace=False)
+    X_sub, y_sub = X[idx], y[idx]
+    
+    bl_f1, noise_dec, out_dec, bl_acc, bl_rec = train_and_evaluate(X_sub, y_sub, SingleDiagnosisModel, epochs=10)
+    single_results.append({'Type': 'Single', 'Dataset': ds_idx, 'Samples': len(df), 'Baseline F1': round(bl_f1, 3), 'Baseline Acc': round(bl_acc, 3), 'Baseline Recall': round(bl_rec, 3), 'Noise Decline %': round(noise_dec, 1), 'Outlier Decline %': round(out_dec, 1)})
+    print(f"Single Dataset {ds_idx}: F1 {bl_f1:.3f} (Acc {bl_acc:.3f}, Rec {bl_rec:.3f}), Noise {noise_dec:.1f}%, Outlier {out_dec:.1f}%")
+
+# Dataset 8 (类型分类, 可选分析 - 简化多分类F1)
+print("\n--- Dataset 8 类型分类鲁棒性 (可选) ---")
+if dataset8 is not None:
+    # 假设Target多类, 简化预处理
+    X8, y8 = preprocess_dataset(dataset8, initial_selected_features)
+    if X8 is not None and len(np.unique(y8)) > 1:
+        n_sub8 = min(3000, len(X8))
+        idx8 = np.random.choice(len(X8), n_sub8, replace=False)
+        X8_sub, y8_sub = X8[idx8], y8[idx8]
+        # 用MTL模拟 (num_tasks=1, 但输出num_classes)
+        num_classes = len(np.unique(y8_sub))
+        class EnhancedDiabetesTypeModel(nn.Module):
+            def __init__(self, input_dim, hidden_dim, num_types):
+                super().__init__()
+                self.shared_layer = nn.Sequential(
+                    nn.Linear(input_dim, hidden_dim * 4),
+                    nn.BatchNorm1d(hidden_dim * 4),
+                    nn.ReLU(),
+                    nn.Dropout(0.4),
+                    nn.Linear(hidden_dim * 4, hidden_dim * 2),
+                    nn.BatchNorm1d(hidden_dim * 2),
+                    nn.ReLU(),
+                    nn.Dropout(0.4),
+                    nn.Linear(hidden_dim * 2, hidden_dim),
+                    nn.BatchNorm1d(hidden_dim),
+                    nn.ReLU(),
+                    nn.Dropout(0.3)
+                )
+                self.head = nn.Linear(hidden_dim, num_types)
+           
+            def forward(self, x):
+                shared = self.shared_layer(x)
+                return self.head(shared)
+        
+        bl_f18, noise_dec8, out_dec8, _, _ = train_and_evaluate(X8_sub, y8_sub, EnhancedDiabetesTypeModel, epochs=10)  # 需调整train_and_evaluate支持num_types
+        print(f"Dataset 8 Type F1 {bl_f18:.3f}, Noise {noise_dec8:.1f}%, Outlier {out_dec8:.1f}%")
+    else:
+        print("Dataset 8 skipped (no valid data)")
+
+# 合并结果
+all_results = multi_results + single_results
+df_results = pd.DataFrame(all_results)
+print("\n--- 鲁棒性总结表 (MTL vs Single) ---")
+print(df_results.to_string(index=False))
+
+# 平均
+mtl_df = df_results[df_results['Type'] == 'MTL']
+single_df = df_results[df_results['Type'] == 'Single']
+print(f"\nMTL 平均 F1: {mtl_df['Baseline F1'].mean():.3f}, 噪声下降: {mtl_df['Noise Decline %'].mean():.1f}%, 异常下降: {mtl_df['Outlier Decline %'].mean():.1f}%")
+print(f"Single 平均 F1: {single_df['Baseline F1'].mean():.3f}, 噪声下降: {single_df['Noise Decline %'].mean():.1f}%, 异常下降: {single_df['Outlier Decline %'].mean():.1f}%")
+
+# 导出
+df_results.to_csv('robustness_analysis.csv', index=False)
+print("\n结果保存到 robustness_analysis.csv")

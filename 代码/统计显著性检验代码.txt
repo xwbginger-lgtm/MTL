@@ -1,0 +1,80 @@
+import numpy as np
+from scipy import stats
+import pandas as pd
+from sklearn.utils import resample  # for bootstrap
+
+# 从日志提取的Type F1序列 (每个变体的val Type F1)
+full_f1 = np.array([0.7118, 0.7651, 0.7517, 0.7588, 0.7600, 0.7597, 0.7593])  # full_model (7 epochs)
+no_attention_f1 = np.array([0.7380, 0.7730, 0.7725, 0.7849, 0.7829, 0.7657, 0.7779, 0.7744, 0.7856, 0.7955, 0.7890, 0.7921, 0.7875, 0.7906, 0.7984, 0.7994, 0.7893, 0.7967, 0.7961, 0.7929, 0.8051, 0.8025, 0.7965, 0.8082, 0.8076, 0.8188, 0.8074, 0.8053, 0.7938, 0.7977, 0.7769])  # no_attention (31 epochs)
+no_domain_f1 = np.array([0.7155, 0.7704, 0.7779, 0.7780, 0.7618, 0.7509, 0.7536])  # no_domain (7 epochs)
+
+# 计算每个变体的均值和Std (with 95% CI via bootstrap)
+def bootstrap_ci(data, n_bootstrap=1000, ci=0.95):
+    bootstraps = [np.mean(resample(data, n_samples=len(data))) for _ in range(n_bootstrap)]
+    ci_low, ci_high = np.percentile(bootstraps, [(1-ci)/2*100, (1+ci)/2*100])
+    return np.mean(bootstraps), np.std(bootstraps), ci_low, ci_high
+
+full_mean, full_std, full_ci_low, full_ci_high = bootstrap_ci(full_f1)
+no_attention_mean, no_attention_std, no_att_ci_low, no_att_ci_high = bootstrap_ci(no_attention_f1)
+no_domain_mean, no_domain_std, no_dom_ci_low, no_dom_ci_high = bootstrap_ci(no_domain_f1)
+
+print("Model Statistics (Type F1) with 95% Bootstrap CI:")
+stats_df = pd.DataFrame({
+    'Model': ['Full Model', 'No Attention', 'No Domain'],
+    'Mean F1': [f"{full_mean:.6f}", f"{no_attention_mean:.6f}", f"{no_domain_mean:.6f}"],
+    'Std F1': [f"{full_std:.6f}", f"{no_attention_std:.6f}", f"{no_domain_std:.6f}"],
+    '95% CI Low': [f"{full_ci_low:.6f}", f"{no_att_ci_low:.6f}", f"{no_dom_ci_low:.6f}"],
+    '95% CI High': [f"{full_ci_high:.6f}", f"{no_att_ci_high:.6f}", f"{no_dom_ci_high:.6f}"]
+})
+print(stats_df.to_string(index=False))
+
+# Wilcoxon signed-rank test (with more decimals)
+# Comparison 1: Full vs No-Attention (pad full to 31 epochs with last value)
+full_padded = np.full_like(no_attention_f1, full_f1[-1])
+stat1, p1 = stats.wilcoxon(full_padded, no_attention_f1, alternative='less')  # Full > No-Attention?
+
+# Comparison 2: Full vs No-Domain (pad to 7 epochs)
+no_domain_padded = np.full_like(full_f1, no_domain_f1[-1]) if len(no_domain_f1) != len(full_f1) else no_domain_f1
+stat2, p2 = stats.wilcoxon(full_f1, no_domain_padded, alternative='less')
+
+# Comparison 3: No-Attention vs No-Domain (pad no_domain to 31)
+no_domain_long_padded = np.full_like(no_attention_f1, no_domain_f1[-1])
+stat3, p3 = stats.wilcoxon(no_domain_long_padded, no_attention_f1, alternative='less')
+
+print("\nWilcoxon Signed-Rank Test Results (Alternative: First > Second):")
+wilcoxon_df = pd.DataFrame({
+    'Comparison': ['Full vs No-Attention', 'Full vs No-Domain', 'No-Attention vs No-Domain'],
+    'Statistic': [f"{stat1:.6f}", f"{stat2:.6f}", f"{stat3:.6f}"],
+    'P-value': [f"{p1:.10f}", f"{p2:.10f}", f"{p3:.10f}"],  # 10位小数避免0截断
+    'Significant (p<0.05)': [p1 < 0.05, p2 < 0.05, p3 < 0.05]
+})
+print(wilcoxon_df.to_string(index=False))
+
+# Bootstrap P-value (alternative to exact, avoids 0)
+def bootstrap_pvalue(data1, data2, n_bootstrap=1000, alternative='less'):
+    diffs = data1 - data2
+    obs_stat = np.sum(diffs > 0)  # Simple rank-like stat
+    boot_stats = []
+    for _ in range(n_bootstrap):
+        boot_diff = resample(diffs)
+        boot_stats.append(np.sum(boot_diff > 0))
+    p = np.mean([1 if stat <= obs_stat else 0 for stat in boot_stats]) if alternative == 'less' else np.mean([1 if stat >= obs_stat else 0 for stat in boot_stats])
+    return p
+
+p1_boot = bootstrap_pvalue(full_padded, no_attention_f1)
+p2_boot = bootstrap_pvalue(full_f1, no_domain_padded)
+p3_boot = bootstrap_pvalue(no_domain_long_padded, no_attention_f1)
+
+print("\nBootstrap P-values (1000 resamples, alternative='less'):")
+boot_df = pd.DataFrame({
+    'Comparison': ['Full vs No-Attention', 'Full vs No-Domain', 'No-Attention vs No-Domain'],
+    'Bootstrap P-value': [f"{p1_boot:.10f}", f"{p2_boot:.10f}", f"{p3_boot:.10f}"],
+    'Significant (p<0.05)': [p1_boot < 0.05, p2_boot < 0.05, p3_boot < 0.05]
+})
+print(boot_df.to_string(index=False))
+
+# Interpretation (updated for decimals)
+print("\nInterpretation:")
+print(f"- Full vs No-Attention: Statistic={stat1:.6f}, p={p1:.10f} (Bootstrap p={p1_boot:.10f}). {'Significant: No-Attention better (p<0.05).' if p1 < 0.05 else 'No significant difference.'}")
+print(f"- Full vs No-Domain: Statistic={stat2:.6f}, p={p2:.10f} (Bootstrap p={p2_boot:.10f}). {'Significant: No-Domain better (p<0.05).' if p2 < 0.05 else 'No significant difference; domain may add noise.'}")
+print(f"- No-Attention vs No-Domain: Statistic={stat3:.6f}, p={p3:.10f} (Bootstrap p={p3_boot:.10f}). {'Significant: No-Attention better (attention contributes; p<0.05).' if p3 < 0.05 else 'No significant difference.'}")

@@ -1,0 +1,886 @@
+数据集 1 列名：['Unnamed: 0', 'Age', 'Gender', 'BMI', 'High_BP', 'FBS', 'HbA1c_level', 'Smoking', 'Diagnosis']
+保存多任务标准化器 0，特征顺序：['Age', 'Gender', 'BMI', 'Pregnancy', 'Glucose', 'BloodPressure', 'HbA1c_level', 'Smoking']，路径：/personal/new_scalers/multi_scaler_0.pkl
+数据集 2 列名：['patient_number', 'cholesterol', 'glucose', 'hdl_chol', 'chol_hdl_ratio', 'age', 'gender', 'height', 'weight', 'bmi', 'systolic_bp', 'diastolic_bp', 'waist', 'hip', 'waist_hip_ratio', 'diabetes']
+保存多任务标准化器 1，特征顺序：['Age', 'Gender', 'BMI', 'Pregnancy', 'Glucose', 'BloodPressure', 'HbA1c_level', 'Smoking']，路径：/personal/new_scalers/multi_scaler_1.pkl
+数据集 3 列名：['Diabetes_012', 'HighBP', 'HighChol', 'CholCheck', 'BMI', 'Smoker', 'Stroke', 'HeartDiseaseorAttack', 'PhysActivity', 'Fruits', 'Veggies', 'HvyAlcoholConsump', 'AnyHealthcare', 'NoDocbcCost', 'GenHlth', 'MentHlth', 'PhysHlth', 'DiffWalk', 'Sex', 'Age', 'Education', 'Income']
+保存多任务标准化器 2，特征顺序：['Age', 'Gender', 'BMI', 'Pregnancy', 'Glucose', 'BloodPressure', 'HbA1c_level', 'Smoking']，路径：/personal/new_scalers/multi_scaler_2.pkl
+数据集 7 列名：['Age', 'Gender', 'BMI', 'SBP', 'DBP', 'FPG', 'Chol', 'Tri', 'HDL', 'LDL', 'ALT', 'BUN', 'CCR', 'FFPG', 'smoking', 'drinking', 'family_histroy', 'Diabetes']
+保存多任务标准化器 3，特征顺序：['Age', 'Gender', 'BMI', 'Pregnancy', 'Glucose', 'BloodPressure', 'HbA1c_level', 'Smoking']，路径：/personal/new_scalers/multi_scaler_3.pkl
+数据集 10 列名：['gender', 'age', 'hypertension', 'heart_disease', 'smoking_history', 'bmi', 'HbA1c_level', 'blood_glucose_level', 'diabetes']
+保存多任务标准化器 4，特征顺序：['Age', 'Gender', 'BMI', 'Pregnancy', 'Glucose', 'BloodPressure', 'HbA1c_level', 'Smoking']，路径：/personal/new_scalers/multi_scaler_4.pkl
+数据集 12 列名：['Case Number', 'Age', 'No of Pregnancy', 'Gestation in previous Pregnancy', 'BMI', 'HDL', 'Family History', 'unexplained prenetal loss', 'Large Child or Birth Default', 'PCOS', 'Sys BP', 'Dia BP', 'OGTT', 'Hemoglobin', 'Sedentary Lifestyle', 'Prediabetes', 'Class Label(GDM /Non GDM)']
+保存多任务标准化器 5，特征顺序：['Age', 'Gender', 'BMI', 'Pregnancy', 'Glucose', 'BloodPressure', 'HbA1c_level', 'Smoking']，路径：/personal/new_scalers/multi_scaler_5.pkl
+数据集 13 列名：['Id', 'Pregnancies', 'Glucose', 'BloodPressure', 'SkinThickness', 'Insulin', 'BMI', 'DiabetesPedigreeFunction', 'Age', 'Outcome']
+保存多任务标准化器 6，特征顺序：['Age', 'Gender', 'BMI', 'Pregnancy', 'Glucose', 'BloodPressure', 'HbA1c_level', 'Smoking']，路径：/personal/new_scalers/multi_scaler_6.pkl
+
+
+
+数据集 4 - 标签列：Diagnosis，唯一值：[1 0]
+数据集 4 列名：['PatientID', 'Age', 'Gender', 'Ethnicity', 'SocioeconomicStatus', 'EducationLevel', 'BMI', 'Smoking', 'AlcoholConsumption', 'PhysicalActivity', 'DietQuality', 'SleepQuality', 'FamilyHistoryDiabetes', 'GestationalDiabetes', 'PolycysticOvarySyndrome', 'PreviousPreDiabetes', 'Hypertension', 'SystolicBP', 'DiastolicBP', 'FastingBloodSugar', 'HbA1c', 'SerumCreatinine', 'BUNLevels', 'CholesterolTotal', 'CholesterolLDL', 'CholesterolHDL', 'CholesterolTriglycerides', 'AntihypertensiveMedications', 'Statins', 'AntidiabeticMedications', 'FrequentUrination', 'ExcessiveThirst', 'UnexplainedWeightLoss', 'FatigueLevels', 'BlurredVision', 'SlowHealingSores', 'TinglingHandsFeet', 'QualityOfLifeScore', 'HeavyMetalsExposure', 'OccupationalExposureChemicals', 'WaterQuality', 'MedicalCheckupsFrequency', 'MedicationAdherence', 'HealthLiteracy', 'Diagnosis', 'DoctorInCharge']
+保存单任务标准化器 任务 3，特征顺序：['Age', 'Gender', 'BMI', 'Pregnancy', 'Glucose', 'BloodPressure', 'HbA1c_level', 'Smoking']，路径：/personal/new_scalers/single_task_scaler_3.pkl
+数据集 6 - 标签列：Diagnosis，唯一值：['Positive' 'Negative']
+数据集 6 列名：['Patient_ID', 'Age', 'Gender', 'Country', 'Blood_Glucose_Level', 'Insulin_Level', 'Diagnosis']
+保存单任务标准化器 任务 5，特征顺序：['Age', 'Gender', 'BMI', 'Pregnancy', 'Glucose', 'BloodPressure', 'HbA1c_level', 'Smoking']，路径：/personal/new_scalers/single_task_scaler_5.pkl
+数据集 9 - 标签列：Diagnosis，唯一值：[0 1]
+数据集 9 列名：['Pregnancies', 'Glucose', 'BloodPressure', 'SkinThickness', 'Insulin', 'BMI', 'DiabetesPedigreeFunction', 'Age', 'Diagnosis']
+保存单任务标准化器 任务 8，特征顺序：['Age', 'Gender', 'BMI', 'Pregnancy', 'Glucose', 'BloodPressure', 'HbA1c_level', 'Smoking']，路径：/personal/new_scalers/single_task_scaler_8.pkl
+
+
+
+Using device: cpu
+数据集 8 列名：['Target', 'Genetic Markers', 'Autoantibodies', 'Family History', 'Environmental Factors', 'Insulin Levels', 'Age', 'BMI', 'Physical Activity', 'Dietary Habits', 'Blood Pressure', 'Cholesterol Levels', 'Waist Circumference', 'Blood Glucose Levels', 'Ethnicity', 'Socioeconomic Factors', 'Smoking Status', 'Alcohol Consumption', 'Glucose Tolerance Test', 'History of PCOS', 'Previous Gestational Diabetes', 'Pregnancy History', 'Weight Gain During Pregnancy', 'Pancreatic Health', 'Pulmonary Function', 'Cystic Fibrosis Diagnosis', 'Steroid Use History', 'Genetic Testing', 'Neurological Assessments', 'Liver Function Tests', 'Digestive Enzyme Levels', 'Urine Test', 'Birth Weight', 'Early Onset Symptoms']
+数据集 8 - 标签列：Target，原始唯一值：['Steroid-Induced Diabetes' 'Neonatal Diabetes Mellitus (NDM)'
+ 'Prediabetic' 'Type 1 Diabetes' 'Wolfram Syndrome' 'LADA'
+ 'Type 2 Diabetes' 'Wolcott-Rallison Syndrome' 'Secondary Diabetes'
+ 'Type 3c Diabetes (Pancreatogenic Diabetes)' 'Gestational Diabetes'
+ 'Cystic Fibrosis-Related Diabetes (CFRD)' 'MODY']
+数据集 8 - 标准化后的类型标签唯一值：['Steroid-Induced Diabetes' 'NDM' 'Prediabetic' 'Type 1 Diabetes'
+ 'Wolfram Syndrome' 'LADA' 'Type 2 Diabetes' 'Unknown'
+ 'Secondary Diabetes' 'Type 3c Diabetes' 'CFRD' 'MODY']
+糖尿病类型标签映射：{'CFRD': 0, 'LADA': 1, 'MODY': 2, 'NDM': 3, 'Prediabetic': 4, 'Secondary Diabetes': 5, 'Steroid-Induced Diabetes': 6, 'Type 1 Diabetes': 7, 'Type 2 Diabetes': 8, 'Type 3c Diabetes': 9, 'Unknown': 10, 'Wolfram Syndrome': 11}
+治疗标签映射：{'Insulin-Dependent': 0, 'No Special Treatment': 1, 'Oral Medications': 2, 'Unknown Treatment': 3}
+类型数据集特征顺序：['Age', 'Blood Glucose Levels', 'Blood Pressure', 'Weight Gain During Pregnancy', 'BMI', 'Digestive Enzyme Levels', 'Waist Circumference', 'Insulin Levels', 'Cholesterol Levels', 'Pulmonary Function']
+保存类型数据集标准化器，特征顺序：['Age', 'Blood Glucose Levels', 'Blood Pressure', 'Weight Gain During Pregnancy', 'BMI', 'Digestive Enzyme Levels', 'Waist Circumference', 'Insulin Levels', 'Cholesterol Levels', 'Pulmonary Function']，路径：/personal/new_scalers/type_scaler.pkl
+
+
+Using device: cpu
+任务 0 标签分布: {0: 8424, 1: 8424}
+任务 0 类权重: 负类=1.0000, 正类=1.0000
+任务 1 标签分布: {0: 330, 1: 330}
+任务 1 类权重: 负类=1.0000, 正类=1.0000
+任务 2 标签分布: {0: 39977, 1: 39977}
+任务 2 类权重: 负类=1.0000, 正类=1.0000
+任务 3 标签分布: {0: 3000, 1: 1303}
+任务 3 类权重: 负类=0.7172, 正类=1.6512
+任务 4 标签分布: {0: 8500, 1: 8500}
+任务 4 类权重: 负类=1.0000, 正类=1.0000
+任务 5 标签分布: {0: 2153, 1: 2153}
+任务 5 类权重: 负类=1.0000, 正类=1.0000
+任务 6 标签分布: {1: 1816, 0: 1816}
+任务 6 类权重: 负类=1.0000, 正类=1.0000
+
+Epoch 1/50 - Multi-Task Model
+Train Loss: 0.5367, Val Loss: 0.5063
+Dataset 1 (Task 0): Precision: 0.8683, Recall: 0.8674, F1: 0.8673, Loss: 0.3106
+Dataset 2 (Task 1): Precision: 0.7920, Recall: 0.6439, F1: 0.5922, Loss: 0.5599
+Dataset 3 (Task 2): Precision: 0.6456, Recall: 0.6450, F1: 0.6446, Loss: 0.6262
+Dataset 7 (Task 3): Precision: 0.8533, Recall: 0.8444, F1: 0.8471, Loss: 0.3787
+Dataset 10 (Task 4): Precision: 0.8764, Recall: 0.8762, F1: 0.8762, Loss: 0.2657
+Dataset 12 (Task 5): Precision: 0.9664, Recall: 0.9664, F1: 0.9664, Loss: 0.1175
+Dataset 13 (Task 6): Precision: 0.7365, Recall: 0.7345, F1: 0.7340, Loss: 0.5179
+New best model (Val Loss: 0.5063)
+
+Epoch 2/50 - Multi-Task Model
+Train Loss: 0.4878, Val Loss: 0.5086
+Dataset 1 (Task 0): Precision: 0.8676, Recall: 0.8638, F1: 0.8634, Loss: 0.2967
+Dataset 2 (Task 1): Precision: 0.7856, Recall: 0.7803, F1: 0.7793, Loss: 0.4777
+Dataset 3 (Task 2): Precision: 0.6391, Recall: 0.6344, F1: 0.6312, Loss: 0.6315
+Dataset 7 (Task 3): Precision: 0.8437, Recall: 0.8223, F1: 0.8274, Loss: 0.4227
+Dataset 10 (Task 4): Precision: 0.8736, Recall: 0.8732, F1: 0.8732, Loss: 0.2656
+Dataset 12 (Task 5): Precision: 0.9677, Recall: 0.9675, F1: 0.9675, Loss: 0.1071
+Dataset 13 (Task 6): Precision: 0.7363, Recall: 0.7359, F1: 0.7358, Loss: 0.5218
+
+Epoch 3/50 - Multi-Task Model
+Train Loss: 0.4826, Val Loss: 0.5064
+Dataset 1 (Task 0): Precision: 0.8675, Recall: 0.8647, F1: 0.8644, Loss: 0.2991
+Dataset 2 (Task 1): Precision: 0.8327, Recall: 0.8106, F1: 0.8074, Loss: 0.4626
+Dataset 3 (Task 2): Precision: 0.6475, Recall: 0.6470, F1: 0.6467, Loss: 0.6239
+Dataset 7 (Task 3): Precision: 0.8473, Recall: 0.8293, F1: 0.8337, Loss: 0.4371
+Dataset 10 (Task 4): Precision: 0.8771, Recall: 0.8738, F1: 0.8735, Loss: 0.2819
+Dataset 12 (Task 5): Precision: 0.9687, Recall: 0.9687, F1: 0.9687, Loss: 0.1145
+Dataset 13 (Task 6): Precision: 0.7388, Recall: 0.7387, F1: 0.7386, Loss: 0.5026
+
+Epoch 4/50 - Multi-Task Model
+Train Loss: 0.4788, Val Loss: 0.5087
+Dataset 1 (Task 0): Precision: 0.8491, Recall: 0.8466, F1: 0.8463, Loss: 0.3254
+Dataset 2 (Task 1): Precision: 0.7836, Recall: 0.7576, F1: 0.7519, Loss: 0.4264
+Dataset 3 (Task 2): Precision: 0.6639, Recall: 0.6639, F1: 0.6639, Loss: 0.6157
+Dataset 7 (Task 3): Precision: 0.8521, Recall: 0.8409, F1: 0.8441, Loss: 0.4167
+Dataset 10 (Task 4): Precision: 0.8633, Recall: 0.8618, F1: 0.8616, Loss: 0.3213
+Dataset 12 (Task 5): Precision: 0.9698, Recall: 0.9698, F1: 0.9698, Loss: 0.1052
+Dataset 13 (Task 6): Precision: 0.7729, Recall: 0.7717, F1: 0.7714, Loss: 0.4993
+
+Epoch 5/50 - Multi-Task Model
+Train Loss: 0.4810, Val Loss: 0.4621
+Dataset 1 (Task 0): Precision: 0.8804, Recall: 0.8801, F1: 0.8801, Loss: 0.2587
+Dataset 2 (Task 1): Precision: 0.7972, Recall: 0.7955, F1: 0.7952, Loss: 0.4322
+Dataset 3 (Task 2): Precision: 0.7082, Recall: 0.7033, F1: 0.7015, Loss: 0.5767
+Dataset 7 (Task 3): Precision: 0.8695, Recall: 0.8664, F1: 0.8676, Loss: 0.3771
+Dataset 10 (Task 4): Precision: 0.8918, Recall: 0.8918, F1: 0.8918, Loss: 0.2345
+Dataset 12 (Task 5): Precision: 0.9733, Recall: 0.9733, F1: 0.9733, Loss: 0.0973
+Dataset 13 (Task 6): Precision: 0.7491, Recall: 0.7469, F1: 0.7464, Loss: 0.5015
+New best model (Val Loss: 0.4621)
+
+Epoch 6/50 - Multi-Task Model
+Train Loss: 0.4752, Val Loss: 0.4590
+Dataset 1 (Task 0): Precision: 0.8892, Recall: 0.8875, F1: 0.8874, Loss: 0.2475
+Dataset 2 (Task 1): Precision: 0.7972, Recall: 0.7955, F1: 0.7952, Loss: 0.4462
+Dataset 3 (Task 2): Precision: 0.7096, Recall: 0.7061, F1: 0.7049, Loss: 0.5771
+Dataset 7 (Task 3): Precision: 0.8596, Recall: 0.8490, F1: 0.8520, Loss: 0.3659
+Dataset 10 (Task 4): Precision: 0.8965, Recall: 0.8956, F1: 0.8955, Loss: 0.2226
+Dataset 12 (Task 5): Precision: 0.9710, Recall: 0.9710, F1: 0.9710, Loss: 0.0956
+Dataset 13 (Task 6): Precision: 0.7536, Recall: 0.7442, F1: 0.7418, Loss: 0.5054
+New best model (Val Loss: 0.4590)
+
+Epoch 7/50 - Multi-Task Model
+Train Loss: 0.4733, Val Loss: 0.4571
+Dataset 1 (Task 0): Precision: 0.8897, Recall: 0.8864, F1: 0.8861, Loss: 0.2466
+Dataset 2 (Task 1): Precision: 0.7889, Recall: 0.7879, F1: 0.7877, Loss: 0.4347
+Dataset 3 (Task 2): Precision: 0.7085, Recall: 0.7073, F1: 0.7069, Loss: 0.5750
+Dataset 7 (Task 3): Precision: 0.8549, Recall: 0.8420, F1: 0.8455, Loss: 0.3631
+Dataset 10 (Task 4): Precision: 0.8966, Recall: 0.8953, F1: 0.8952, Loss: 0.2204
+Dataset 12 (Task 5): Precision: 0.9710, Recall: 0.9710, F1: 0.9710, Loss: 0.0998
+Dataset 13 (Task 6): Precision: 0.7508, Recall: 0.7400, F1: 0.7373, Loss: 0.4995
+New best model (Val Loss: 0.4571)
+
+Epoch 8/50 - Multi-Task Model
+Train Loss: 0.4700, Val Loss: 0.4582
+Dataset 1 (Task 0): Precision: 0.8918, Recall: 0.8872, F1: 0.8869, Loss: 0.2463
+Dataset 2 (Task 1): Precision: 0.7961, Recall: 0.7955, F1: 0.7953, Loss: 0.4347
+Dataset 3 (Task 2): Precision: 0.7070, Recall: 0.7050, F1: 0.7042, Loss: 0.5767
+Dataset 7 (Task 3): Precision: 0.8595, Recall: 0.8479, F1: 0.8510, Loss: 0.3653
+Dataset 10 (Task 4): Precision: 0.8963, Recall: 0.8950, F1: 0.8949, Loss: 0.2218
+Dataset 12 (Task 5): Precision: 0.9698, Recall: 0.9698, F1: 0.9698, Loss: 0.0948
+Dataset 13 (Task 6): Precision: 0.7841, Recall: 0.7799, F1: 0.7791, Loss: 0.4969
+
+Epoch 9/50 - Multi-Task Model
+Train Loss: 0.4689, Val Loss: 0.4576
+Dataset 1 (Task 0): Precision: 0.8889, Recall: 0.8840, F1: 0.8836, Loss: 0.2457
+Dataset 2 (Task 1): Precision: 0.7881, Recall: 0.7879, F1: 0.7878, Loss: 0.4366
+Dataset 3 (Task 2): Precision: 0.7063, Recall: 0.7053, F1: 0.7050, Loss: 0.5764
+Dataset 7 (Task 3): Precision: 0.8475, Recall: 0.8258, F1: 0.8308, Loss: 0.3676
+Dataset 10 (Task 4): Precision: 0.8957, Recall: 0.8935, F1: 0.8934, Loss: 0.2199
+Dataset 12 (Task 5): Precision: 0.9687, Recall: 0.9687, F1: 0.9687, Loss: 0.0958
+Dataset 13 (Task 6): Precision: 0.7676, Recall: 0.7662, F1: 0.7659, Loss: 0.4929
+
+Epoch 10/50 - Multi-Task Model
+Train Loss: 0.4703, Val Loss: 0.4569
+Dataset 1 (Task 0): Precision: 0.8910, Recall: 0.8858, F1: 0.8854, Loss: 0.2476
+Dataset 2 (Task 1): Precision: 0.7961, Recall: 0.7955, F1: 0.7953, Loss: 0.4252
+Dataset 3 (Task 2): Precision: 0.7049, Recall: 0.7048, F1: 0.7047, Loss: 0.5745
+Dataset 7 (Task 3): Precision: 0.8571, Recall: 0.8444, F1: 0.8478, Loss: 0.3601
+Dataset 10 (Task 4): Precision: 0.8944, Recall: 0.8929, F1: 0.8928, Loss: 0.2236
+Dataset 12 (Task 5): Precision: 0.9710, Recall: 0.9710, F1: 0.9710, Loss: 0.0969
+Dataset 13 (Task 6): Precision: 0.7815, Recall: 0.7785, F1: 0.7780, Loss: 0.4935
+New best model (Val Loss: 0.4569)
+
+Epoch 11/50 - Multi-Task Model
+Train Loss: 0.4691, Val Loss: 0.4558
+Dataset 1 (Task 0): Precision: 0.8917, Recall: 0.8866, F1: 0.8863, Loss: 0.2458
+Dataset 2 (Task 1): Precision: 0.7889, Recall: 0.7879, F1: 0.7877, Loss: 0.4190
+Dataset 3 (Task 2): Precision: 0.7056, Recall: 0.7046, F1: 0.7042, Loss: 0.5735
+Dataset 7 (Task 3): Precision: 0.8517, Recall: 0.8339, F1: 0.8383, Loss: 0.3640
+Dataset 10 (Task 4): Precision: 0.8962, Recall: 0.8926, F1: 0.8924, Loss: 0.2217
+Dataset 12 (Task 5): Precision: 0.9711, Recall: 0.9710, F1: 0.9710, Loss: 0.0969
+Dataset 13 (Task 6): Precision: 0.7778, Recall: 0.7744, F1: 0.7737, Loss: 0.4919
+New best model (Val Loss: 0.4558)
+
+Epoch 12/50 - Multi-Task Model
+Train Loss: 0.4697, Val Loss: 0.4580
+Dataset 1 (Task 0): Precision: 0.8845, Recall: 0.8837, F1: 0.8836, Loss: 0.2523
+Dataset 2 (Task 1): Precision: 0.7961, Recall: 0.7955, F1: 0.7953, Loss: 0.4121
+Dataset 3 (Task 2): Precision: 0.7062, Recall: 0.7061, F1: 0.7060, Loss: 0.5749
+Dataset 7 (Task 3): Precision: 0.8533, Recall: 0.8339, F1: 0.8384, Loss: 0.3588
+Dataset 10 (Task 4): Precision: 0.8939, Recall: 0.8938, F1: 0.8938, Loss: 0.2285
+Dataset 12 (Task 5): Precision: 0.9710, Recall: 0.9710, F1: 0.9710, Loss: 0.0973
+Dataset 13 (Task 6): Precision: 0.7794, Recall: 0.7772, F1: 0.7767, Loss: 0.4831
+
+Epoch 13/50 - Multi-Task Model
+Train Loss: 0.4695, Val Loss: 0.4556
+Dataset 1 (Task 0): Precision: 0.8946, Recall: 0.8878, F1: 0.8874, Loss: 0.2462
+Dataset 2 (Task 1): Precision: 0.8124, Recall: 0.8106, F1: 0.8103, Loss: 0.3997
+Dataset 3 (Task 2): Precision: 0.7064, Recall: 0.7056, F1: 0.7054, Loss: 0.5743
+Dataset 7 (Task 3): Precision: 0.8518, Recall: 0.8316, F1: 0.8363, Loss: 0.3655
+Dataset 10 (Task 4): Precision: 0.9007, Recall: 0.8979, F1: 0.8978, Loss: 0.2174
+Dataset 12 (Task 5): Precision: 0.9722, Recall: 0.9722, F1: 0.9722, Loss: 0.0939
+Dataset 13 (Task 6): Precision: 0.7698, Recall: 0.7675, F1: 0.7671, Loss: 0.4909
+New best model (Val Loss: 0.4556)
+
+Epoch 14/50 - Multi-Task Model
+Train Loss: 0.4689, Val Loss: 0.4554
+Dataset 1 (Task 0): Precision: 0.8891, Recall: 0.8858, F1: 0.8855, Loss: 0.2464
+Dataset 2 (Task 1): Precision: 0.7961, Recall: 0.7955, F1: 0.7953, Loss: 0.3973
+Dataset 3 (Task 2): Precision: 0.7064, Recall: 0.7061, F1: 0.7061, Loss: 0.5738
+Dataset 7 (Task 3): Precision: 0.8577, Recall: 0.8397, F1: 0.8440, Loss: 0.3610
+Dataset 10 (Task 4): Precision: 0.8964, Recall: 0.8956, F1: 0.8955, Loss: 0.2219
+Dataset 12 (Task 5): Precision: 0.9733, Recall: 0.9733, F1: 0.9733, Loss: 0.0928
+Dataset 13 (Task 6): Precision: 0.7876, Recall: 0.7868, F1: 0.7867, Loss: 0.4807
+New best model (Val Loss: 0.4554)
+
+Epoch 15/50 - Multi-Task Model
+Train Loss: 0.4707, Val Loss: 0.4565
+Dataset 1 (Task 0): Precision: 0.8873, Recall: 0.8825, F1: 0.8821, Loss: 0.2441
+Dataset 2 (Task 1): Precision: 0.7682, Recall: 0.7652, F1: 0.7645, Loss: 0.4191
+Dataset 3 (Task 2): Precision: 0.7092, Recall: 0.7043, F1: 0.7026, Loss: 0.5757
+Dataset 7 (Task 3): Precision: 0.8532, Recall: 0.8362, F1: 0.8404, Loss: 0.3593
+Dataset 10 (Task 4): Precision: 0.8962, Recall: 0.8935, F1: 0.8933, Loss: 0.2208
+Dataset 12 (Task 5): Precision: 0.9711, Recall: 0.9710, F1: 0.9710, Loss: 0.0948
+Dataset 13 (Task 6): Precision: 0.7861, Recall: 0.7785, F1: 0.7771, Loss: 0.4866
+
+Epoch 16/50 - Multi-Task Model
+Train Loss: 0.4683, Val Loss: 0.4546
+Dataset 1 (Task 0): Precision: 0.8925, Recall: 0.8902, F1: 0.8900, Loss: 0.2387
+Dataset 2 (Task 1): Precision: 0.7804, Recall: 0.7803, F1: 0.7803, Loss: 0.4202
+Dataset 3 (Task 2): Precision: 0.7087, Recall: 0.7082, F1: 0.7080, Loss: 0.5760
+Dataset 7 (Task 3): Precision: 0.8562, Recall: 0.8420, F1: 0.8457, Loss: 0.3577
+Dataset 10 (Task 4): Precision: 0.8997, Recall: 0.8988, F1: 0.8988, Loss: 0.2148
+Dataset 12 (Task 5): Precision: 0.9722, Recall: 0.9722, F1: 0.9722, Loss: 0.0864
+Dataset 13 (Task 6): Precision: 0.7822, Recall: 0.7785, F1: 0.7779, Loss: 0.4786
+New best model (Val Loss: 0.4546)
+
+Epoch 17/50 - Multi-Task Model
+Train Loss: 0.4685, Val Loss: 0.4564
+Dataset 1 (Task 0): Precision: 0.8935, Recall: 0.8875, F1: 0.8871, Loss: 0.2443
+Dataset 2 (Task 1): Precision: 0.7585, Recall: 0.7576, F1: 0.7574, Loss: 0.4045
+Dataset 3 (Task 2): Precision: 0.7085, Recall: 0.7062, F1: 0.7054, Loss: 0.5757
+Dataset 7 (Task 3): Precision: 0.8616, Recall: 0.8490, F1: 0.8523, Loss: 0.3570
+Dataset 10 (Task 4): Precision: 0.8964, Recall: 0.8921, F1: 0.8918, Loss: 0.2235
+Dataset 12 (Task 5): Precision: 0.9711, Recall: 0.9710, F1: 0.9710, Loss: 0.0902
+Dataset 13 (Task 6): Precision: 0.7726, Recall: 0.7689, F1: 0.7682, Loss: 0.4824
+
+Epoch 18/50 - Multi-Task Model
+Train Loss: 0.4681, Val Loss: 0.4564
+Dataset 1 (Task 0): Precision: 0.8905, Recall: 0.8878, F1: 0.8876, Loss: 0.2414
+Dataset 2 (Task 1): Precision: 0.8041, Recall: 0.8030, F1: 0.8028, Loss: 0.3903
+Dataset 3 (Task 2): Precision: 0.7046, Recall: 0.7045, F1: 0.7045, Loss: 0.5767
+Dataset 7 (Task 3): Precision: 0.8540, Recall: 0.8397, F1: 0.8435, Loss: 0.3685
+Dataset 10 (Task 4): Precision: 0.9009, Recall: 0.8988, F1: 0.8987, Loss: 0.2203
+Dataset 12 (Task 5): Precision: 0.9722, Recall: 0.9722, F1: 0.9722, Loss: 0.0875
+Dataset 13 (Task 6): Precision: 0.7733, Recall: 0.7689, F1: 0.7680, Loss: 0.4796
+
+Epoch 19/50 - Multi-Task Model
+Train Loss: 0.4670, Val Loss: 0.4561
+Dataset 1 (Task 0): Precision: 0.8944, Recall: 0.8881, F1: 0.8877, Loss: 0.2454
+Dataset 2 (Task 1): Precision: 0.7881, Recall: 0.7879, F1: 0.7878, Loss: 0.3983
+Dataset 3 (Task 2): Precision: 0.7060, Recall: 0.7055, F1: 0.7053, Loss: 0.5750
+Dataset 7 (Task 3): Precision: 0.8433, Recall: 0.8188, F1: 0.8243, Loss: 0.3654
+Dataset 10 (Task 4): Precision: 0.8991, Recall: 0.8938, F1: 0.8935, Loss: 0.2218
+Dataset 12 (Task 5): Precision: 0.9711, Recall: 0.9710, F1: 0.9710, Loss: 0.0918
+Dataset 13 (Task 6): Precision: 0.7969, Recall: 0.7895, F1: 0.7883, Loss: 0.4790
+
+Epoch 20/50 - Multi-Task Model
+Train Loss: 0.4667, Val Loss: 0.4528
+Dataset 1 (Task 0): Precision: 0.8938, Recall: 0.8893, F1: 0.8890, Loss: 0.2387
+Dataset 2 (Task 1): Precision: 0.7881, Recall: 0.7879, F1: 0.7878, Loss: 0.4047
+Dataset 3 (Task 2): Precision: 0.7071, Recall: 0.7063, F1: 0.7061, Loss: 0.5729
+Dataset 7 (Task 3): Precision: 0.8517, Recall: 0.8339, F1: 0.8383, Loss: 0.3608
+Dataset 10 (Task 4): Precision: 0.8976, Recall: 0.8947, F1: 0.8945, Loss: 0.2148
+Dataset 12 (Task 5): Precision: 0.9722, Recall: 0.9722, F1: 0.9722, Loss: 0.0870
+Dataset 13 (Task 6): Precision: 0.7825, Recall: 0.7785, F1: 0.7778, Loss: 0.4829
+New best model (Val Loss: 0.4528)
+
+Epoch 21/50 - Multi-Task Model
+Train Loss: 0.4668, Val Loss: 0.4513
+Dataset 1 (Task 0): Precision: 0.8930, Recall: 0.8881, F1: 0.8878, Loss: 0.2355
+Dataset 2 (Task 1): Precision: 0.7730, Recall: 0.7727, F1: 0.7727, Loss: 0.3993
+Dataset 3 (Task 2): Precision: 0.7079, Recall: 0.7066, F1: 0.7062, Loss: 0.5720
+Dataset 7 (Task 3): Precision: 0.8539, Recall: 0.8374, F1: 0.8415, Loss: 0.3593
+Dataset 10 (Task 4): Precision: 0.8995, Recall: 0.8965, F1: 0.8963, Loss: 0.2117
+Dataset 12 (Task 5): Precision: 0.9711, Recall: 0.9710, F1: 0.9710, Loss: 0.0871
+Dataset 13 (Task 6): Precision: 0.7770, Recall: 0.7730, F1: 0.7723, Loss: 0.4823
+New best model (Val Loss: 0.4513)
+
+Epoch 22/50 - Multi-Task Model
+Train Loss: 0.4664, Val Loss: 0.4520
+Dataset 1 (Task 0): Precision: 0.8929, Recall: 0.8869, F1: 0.8865, Loss: 0.2376
+Dataset 2 (Task 1): Precision: 0.7889, Recall: 0.7879, F1: 0.7877, Loss: 0.4103
+Dataset 3 (Task 2): Precision: 0.7079, Recall: 0.7056, F1: 0.7048, Loss: 0.5723
+Dataset 7 (Task 3): Precision: 0.8540, Recall: 0.8362, F1: 0.8405, Loss: 0.3584
+Dataset 10 (Task 4): Precision: 0.8999, Recall: 0.8962, F1: 0.8959, Loss: 0.2134
+Dataset 12 (Task 5): Precision: 0.9722, Recall: 0.9722, F1: 0.9722, Loss: 0.0892
+Dataset 13 (Task 6): Precision: 0.7807, Recall: 0.7744, F1: 0.7732, Loss: 0.4810
+
+Epoch 23/50 - Multi-Task Model
+Train Loss: 0.4661, Val Loss: 0.4528
+Dataset 1 (Task 0): Precision: 0.8918, Recall: 0.8869, F1: 0.8866, Loss: 0.2400
+Dataset 2 (Task 1): Precision: 0.7889, Recall: 0.7879, F1: 0.7877, Loss: 0.4077
+Dataset 3 (Task 2): Precision: 0.7086, Recall: 0.7071, F1: 0.7066, Loss: 0.5727
+Dataset 7 (Task 3): Precision: 0.8562, Recall: 0.8397, F1: 0.8438, Loss: 0.3550
+Dataset 10 (Task 4): Precision: 0.8974, Recall: 0.8944, F1: 0.8942, Loss: 0.2168
+Dataset 12 (Task 5): Precision: 0.9734, Recall: 0.9733, F1: 0.9733, Loss: 0.0869
+Dataset 13 (Task 6): Precision: 0.7741, Recall: 0.7717, F1: 0.7712, Loss: 0.4788
+
+Epoch 24/50 - Multi-Task Model
+Train Loss: 0.4674, Val Loss: 0.4521
+Dataset 1 (Task 0): Precision: 0.8900, Recall: 0.8866, F1: 0.8864, Loss: 0.2390
+Dataset 2 (Task 1): Precision: 0.8033, Recall: 0.8030, F1: 0.8030, Loss: 0.3988
+Dataset 3 (Task 2): Precision: 0.7077, Recall: 0.7073, F1: 0.7071, Loss: 0.5724
+Dataset 7 (Task 3): Precision: 0.8555, Recall: 0.8374, F1: 0.8417, Loss: 0.3558
+Dataset 10 (Task 4): Precision: 0.8983, Recall: 0.8968, F1: 0.8967, Loss: 0.2148
+Dataset 12 (Task 5): Precision: 0.9710, Recall: 0.9710, F1: 0.9710, Loss: 0.0882
+Dataset 13 (Task 6): Precision: 0.7693, Recall: 0.7675, F1: 0.7672, Loss: 0.4754
+
+Epoch 25/50 - Multi-Task Model
+Train Loss: 0.4641, Val Loss: 0.4521
+Dataset 1 (Task 0): Precision: 0.8926, Recall: 0.8887, F1: 0.8885, Loss: 0.2392
+Dataset 2 (Task 1): Precision: 0.7879, Recall: 0.7879, F1: 0.7879, Loss: 0.4028
+Dataset 3 (Task 2): Precision: 0.7082, Recall: 0.7075, F1: 0.7072, Loss: 0.5719
+Dataset 7 (Task 3): Precision: 0.8609, Recall: 0.8490, F1: 0.8522, Loss: 0.3558
+Dataset 10 (Task 4): Precision: 0.8982, Recall: 0.8959, F1: 0.8957, Loss: 0.2159
+Dataset 12 (Task 5): Precision: 0.9722, Recall: 0.9722, F1: 0.9722, Loss: 0.0898
+Dataset 13 (Task 6): Precision: 0.7796, Recall: 0.7772, F1: 0.7767, Loss: 0.4780
+
+Epoch 26/50 - Multi-Task Model
+Train Loss: 0.4647, Val Loss: 0.4524
+Dataset 1 (Task 0): Precision: 0.8932, Recall: 0.8890, F1: 0.8887, Loss: 0.2382
+Dataset 2 (Task 1): Precision: 0.7955, Recall: 0.7955, F1: 0.7954, Loss: 0.4050
+Dataset 3 (Task 2): Precision: 0.7069, Recall: 0.7065, F1: 0.7063, Loss: 0.5728
+Dataset 7 (Task 3): Precision: 0.8600, Recall: 0.8467, F1: 0.8502, Loss: 0.3531
+Dataset 10 (Task 4): Precision: 0.9000, Recall: 0.8976, F1: 0.8975, Loss: 0.2152
+Dataset 12 (Task 5): Precision: 0.9710, Recall: 0.9710, F1: 0.9710, Loss: 0.0882
+Dataset 13 (Task 6): Precision: 0.7801, Recall: 0.7785, F1: 0.7782, Loss: 0.4793
+Early stopping at epoch 26
+Multi-task model saved to: /personal/new_models/finall_diabetes_multi_diagnosis_mode.pth
+
+
+Using device: cpu
+成功加载数据集: /personal/Diabetes Simple Diagnosis.csv
+成功加载数据集: /personal/diabetes.csv
+成功加载数据集: /personal/diabetes_012_health_indicators_BRFSS2015.csv
+成功加载数据集: /personal/diabetes_data.csv
+成功加载数据集: /personal/diabetes_data_upload.csv
+成功加载数据集: /personal/diabetes_dataset.csv
+成功加载数据集: /personal/Diabetes_Dataset_With_18_Features.csv
+成功加载数据集: /personal/diabetes_dataset00.csv
+成功加载数据集: /personal/Diabetes_prediction.csv
+成功加载数据集: /personal/diabetes_prediction_dataset.csv
+成功加载数据集: /personal/Gestational Diabetes.csv
+成功加载数据集: /personal/Gestational Diabetic Dat Set.csv
+成功加载数据集: /personal/Healthcare-Diabetes.csv
+
+===== 训练任务 0 (数据集 4) =====
+
+===== 预处理数据集 4 =====
+原始列名: ['patientid', 'age', 'gender', 'ethnicity', 'socioeconomicstatus', 'educationlevel', 'bmi', 'smoking', 'alcoholconsumption', 'physicalactivity', 'dietquality', 'sleepquality', 'familyhistorydiabetes', 'gestationaldiabetes', 'polycysticovarysyndrome', 'previousprediabetes', 'hypertension', 'systolicbp', 'diastolicbp', 'fastingbloodsugar', 'hba1c', 'serumcreatinine', 'bunlevels', 'cholesteroltotal', 'cholesterolldl', 'cholesterolhdl', 'cholesteroltriglycerides', 'antihypertensivemedications', 'statins', 'antidiabeticmedications', 'frequenturination', 'excessivethirst', 'unexplainedweightloss', 'fatiguelevels', 'blurredvision', 'slowhealingsores', 'tinglinghandsfeet', 'qualityoflifescore', 'heavymetalsexposure', 'occupationalexposurechemicals', 'waterquality', 'medicalcheckupsfrequency', 'medicationadherence', 'healthliteracy', 'diagnosis', 'doctorincharge']
+标签分布: {0: 1127, 1: 752}
+
+Epoch 1 指标:
+Train Loss: 0.5412
+Val Loss:   0.4348
+Precision:  0.8676
+Recall:     0.7867
+F1 Score:   0.8252
+✨ 发现新最佳模型，已保存
+
+Epoch 2 指标:
+Train Loss: 0.4311
+Val Loss:   0.4062
+Precision:  0.8514
+Recall:     0.8400
+F1 Score:   0.8456
+✨ 发现新最佳模型，已保存
+
+Epoch 3 指标:
+Train Loss: 0.4358
+Val Loss:   0.3940
+Precision:  0.8681
+Recall:     0.8333
+F1 Score:   0.8503
+✨ 发现新最佳模型，已保存
+
+Epoch 4 指标:
+Train Loss: 0.3978
+Val Loss:   0.3914
+Precision:  0.8955
+Recall:     0.8000
+F1 Score:   0.8451
+
+Epoch 5 指标:
+Train Loss: 0.4163
+Val Loss:   0.3904
+Precision:  0.8794
+Recall:     0.8267
+F1 Score:   0.8522
+✨ 发现新最佳模型，已保存
+
+Epoch 6 指标:
+Train Loss: 0.3803
+Val Loss:   0.3932
+Precision:  0.8931
+Recall:     0.7800
+F1 Score:   0.8327
+
+Epoch 7 指标:
+Train Loss: 0.3995
+Val Loss:   0.3826
+Precision:  0.8832
+Recall:     0.8067
+F1 Score:   0.8432
+
+Epoch 8 指标:
+Train Loss: 0.3736
+Val Loss:   0.3879
+Precision:  0.8553
+Recall:     0.8667
+F1 Score:   0.8609
+✨ 发现新最佳模型，已保存
+
+Epoch 9 指标:
+Train Loss: 0.3739
+Val Loss:   0.3746
+Precision:  0.8849
+Recall:     0.8200
+F1 Score:   0.8512
+
+Epoch 10 指标:
+Train Loss: 0.3799
+Val Loss:   0.3676
+Precision:  0.8921
+Recall:     0.8267
+F1 Score:   0.8581
+
+Epoch 11 指标:
+Train Loss: 0.3875
+Val Loss:   0.3655
+Precision:  0.8929
+Recall:     0.8333
+F1 Score:   0.8621
+✨ 发现新最佳模型，已保存
+
+Epoch 12 指标:
+Train Loss: 0.3786
+Val Loss:   0.3776
+Precision:  0.8986
+Recall:     0.8267
+F1 Score:   0.8611
+
+Epoch 13 指标:
+Train Loss: 0.3930
+Val Loss:   0.3715
+Precision:  0.8828
+Recall:     0.8533
+F1 Score:   0.8678
+✨ 发现新最佳模型，已保存
+
+Epoch 14 指标:
+Train Loss: 0.3667
+Val Loss:   0.3874
+Precision:  0.9023
+Recall:     0.8000
+F1 Score:   0.8481
+
+Epoch 15 指标:
+Train Loss: 0.3486
+Val Loss:   0.3710
+Precision:  0.8819
+Recall:     0.8467
+F1 Score:   0.8639
+
+Epoch 16 指标:
+Train Loss: 0.3562
+Val Loss:   0.3706
+Precision:  0.8767
+Recall:     0.8533
+F1 Score:   0.8649
+
+Epoch 17 指标:
+Train Loss: 0.3676
+Val Loss:   0.3707
+Precision:  0.8881
+Recall:     0.8467
+F1 Score:   0.8669
+
+Epoch 18 指标:
+Train Loss: 0.3503
+Val Loss:   0.3697
+Precision:  0.8639
+Recall:     0.8467
+F1 Score:   0.8552
+⏹ 早停于epoch 18，最佳F1分数: 0.8678
+
+=== 训练完成 ===
+最佳验证集指标 (任务 0):
+Precision: 0.8828
+Recall:    0.8533
+F1 Score:  0.8678
+
+===== 训练任务 1 (数据集 6) =====
+
+===== 预处理数据集 6 =====
+原始列名: ['patient_id', 'age', 'gender', 'country', 'blood_glucose_level', 'insulin_level', 'diagnosis']
+标签分布: {1: 5043, 0: 4957}
+
+Epoch 1 指标:
+Train Loss: 0.7092
+Val Loss:   0.6959
+Precision:  0.4871
+Recall:     0.5520
+F1 Score:   0.5175
+✨ 发现新最佳模型，已保存
+
+Epoch 2 指标:
+Train Loss: 0.6984
+Val Loss:   0.6948
+Precision:  0.4928
+Recall:     0.4480
+F1 Score:   0.4693
+
+Epoch 3 指标:
+Train Loss: 0.6969
+Val Loss:   0.6947
+Precision:  0.4975
+Recall:     0.8174
+F1 Score:   0.6186
+✨ 发现新最佳模型，已保存
+
+Epoch 4 指标:
+Train Loss: 0.6943
+Val Loss:   0.6962
+Precision:  0.4944
+Recall:     0.6710
+F1 Score:   0.5693
+
+Epoch 5 指标:
+Train Loss: 0.6954
+Val Loss:   0.6948
+Precision:  0.5145
+Recall:     0.3037
+F1 Score:   0.3820
+
+Epoch 6 指标:
+Train Loss: 0.6935
+Val Loss:   0.6950
+Precision:  0.4933
+Recall:     0.4480
+F1 Score:   0.4696
+
+Epoch 7 指标:
+Train Loss: 0.6936
+Val Loss:   0.6949
+Precision:  0.4957
+Recall:     0.5207
+F1 Score:   0.5079
+
+Epoch 8 指标:
+Train Loss: 0.6934
+Val Loss:   0.6946
+Precision:  0.4936
+Recall:     0.5055
+F1 Score:   0.4995
+⏹ 早停于epoch 8，最佳F1分数: 0.6186
+
+=== 训练完成 ===
+最佳验证集指标 (任务 1):
+Precision: 0.4975
+Recall:    0.8174
+F1 Score:  0.6186
+
+===== 训练任务 2 (数据集 9) =====
+
+===== 预处理数据集 9 =====
+原始列名: ['pregnancies', 'glucose', 'bloodpressure', 'skinthickness', 'insulin', 'bmi', 'diabetespedigreefunction', 'age', 'diagnosis']
+标签分布: {0: 694, 1: 306}
+
+Epoch 1 指标:
+Train Loss: 0.4343
+Val Loss:   0.3167
+Precision:  1.0000
+Recall:     1.0000
+F1 Score:   1.0000
+✨ 发现新最佳模型，已保存
+
+Epoch 2 指标:
+Train Loss: 0.1844
+Val Loss:   0.0866
+Precision:  1.0000
+Recall:     1.0000
+F1 Score:   1.0000
+
+Epoch 3 指标:
+Train Loss: 0.0955
+Val Loss:   0.0532
+Precision:  1.0000
+Recall:     1.0000
+F1 Score:   1.0000
+
+Epoch 4 指标:
+Train Loss: 0.0773
+Val Loss:   0.0392
+Precision:  1.0000
+Recall:     1.0000
+F1 Score:   1.0000
+
+Epoch 5 指标:
+Train Loss: 0.0664
+Val Loss:   0.0262
+Precision:  1.0000
+Recall:     1.0000
+F1 Score:   1.0000
+
+Epoch 6 指标:
+Train Loss: 0.0687
+Val Loss:   0.0228
+Precision:  1.0000
+Recall:     1.0000
+F1 Score:   1.0000
+⏹ 早停于epoch 6，最佳F1分数: 1.0000
+
+=== 训练完成 ===
+最佳验证集指标 (任务 2):
+Precision: 1.0000
+Recall:    1.0000
+F1 Score:  1.0000
+
+Using device: cpu
+Saved scaler to: /personal/pth/scaler_dataset8.pkl
+
+Training full_model...
+
+full_model - Epoch 1/50
+Train Loss: 1.7547, Val Loss: 1.0038
+Type Acc: 0.7162, Treat Acc: 0.8280
+Type F1: 0.7118, Treat F1: 0.8269
+New best model (Val Loss: 1.0038)
+
+full_model - Epoch 2/50
+Train Loss: 1.3429, Val Loss: 0.8209
+Type Acc: 0.7658, Treat Acc: 0.8605
+Type F1: 0.7651, Treat F1: 0.8603
+New best model (Val Loss: 0.8209)
+
+full_model - Epoch 3/50
+Train Loss: 1.2941, Val Loss: 0.8403
+Type Acc: 0.7565, Treat Acc: 0.8572
+Type F1: 0.7517, Treat F1: 0.8572
+
+full_model - Epoch 4/50
+Train Loss: 1.3057, Val Loss: 0.8222
+Type Acc: 0.7610, Treat Acc: 0.8676
+Type F1: 0.7588, Treat F1: 0.8671
+
+full_model - Epoch 5/50
+Train Loss: 1.3618, Val Loss: 0.8420
+Type Acc: 0.7655, Treat Acc: 0.8512
+Type F1: 0.7600, Treat F1: 0.8506
+
+full_model - Epoch 6/50
+Train Loss: 1.3974, Val Loss: 0.8826
+Type Acc: 0.7631, Treat Acc: 0.8625
+Type F1: 0.7597, Treat F1: 0.8616
+
+full_model - Epoch 7/50
+Train Loss: 1.3817, Val Loss: 0.8675
+Type Acc: 0.7634, Treat Acc: 0.8476
+Type F1: 0.7593, Treat F1: 0.8473
+Early stopping at epoch 7
+Model saved to: /personal/new_models/full_model_dataset8_diabetes_type_model.pth
+
+Training no_attention...
+
+no_attention - Epoch 1/50
+Train Loss: 1.4964, Val Loss: 0.8961
+Type Acc: 0.7444, Treat Acc: 0.8166
+Type F1: 0.7380, Treat F1: 0.8161
+New best model (Val Loss: 0.8961)
+
+no_attention - Epoch 2/50
+Train Loss: 1.1867, Val Loss: 0.8109
+Type Acc: 0.7760, Treat Acc: 0.8591
+Type F1: 0.7730, Treat F1: 0.8582
+New best model (Val Loss: 0.8109)
+
+no_attention - Epoch 3/50
+Train Loss: 1.1594, Val Loss: 0.8362
+Type Acc: 0.7721, Treat Acc: 0.8455
+Type F1: 0.7725, Treat F1: 0.8466
+
+no_attention - Epoch 4/50
+Train Loss: 1.1481, Val Loss: 0.7642
+Type Acc: 0.7867, Treat Acc: 0.8615
+Type F1: 0.7849, Treat F1: 0.8619
+New best model (Val Loss: 0.7642)
+
+no_attention - Epoch 5/50
+Train Loss: 1.1532, Val Loss: 0.7762
+Type Acc: 0.7852, Treat Acc: 0.8616
+Type F1: 0.7829, Treat F1: 0.8618
+
+no_attention - Epoch 6/50
+Train Loss: 1.1480, Val Loss: 0.7792
+Type Acc: 0.7698, Treat Acc: 0.8688
+Type F1: 0.7657, Treat F1: 0.8689
+
+no_attention - Epoch 7/50
+Train Loss: 1.1202, Val Loss: 0.7858
+Type Acc: 0.7783, Treat Acc: 0.8548
+Type F1: 0.7779, Treat F1: 0.8550
+
+no_attention - Epoch 8/50
+Train Loss: 1.0829, Val Loss: 0.7350
+Type Acc: 0.7783, Treat Acc: 0.8656
+Type F1: 0.7744, Treat F1: 0.8654
+New best model (Val Loss: 0.7350)
+
+no_attention - Epoch 9/50
+Train Loss: 1.0615, Val Loss: 0.7292
+Type Acc: 0.7878, Treat Acc: 0.8573
+Type F1: 0.7856, Treat F1: 0.8581
+New best model (Val Loss: 0.7292)
+
+no_attention - Epoch 10/50
+Train Loss: 1.0527, Val Loss: 0.7541
+Type Acc: 0.7984, Treat Acc: 0.8692
+Type F1: 0.7955, Treat F1: 0.8697
+
+no_attention - Epoch 11/50
+Train Loss: 1.0366, Val Loss: 0.7247
+Type Acc: 0.7914, Treat Acc: 0.8796
+Type F1: 0.7890, Treat F1: 0.8794
+New best model (Val Loss: 0.7247)
+
+no_attention - Epoch 12/50
+Train Loss: 1.0169, Val Loss: 0.7179
+Type Acc: 0.7930, Treat Acc: 0.8789
+Type F1: 0.7921, Treat F1: 0.8788
+New best model (Val Loss: 0.7179)
+
+no_attention - Epoch 13/50
+Train Loss: 1.0038, Val Loss: 0.7241
+Type Acc: 0.7889, Treat Acc: 0.8813
+Type F1: 0.7875, Treat F1: 0.8808
+
+no_attention - Epoch 14/50
+Train Loss: 0.9894, Val Loss: 0.7564
+Type Acc: 0.7960, Treat Acc: 0.8734
+Type F1: 0.7906, Treat F1: 0.8722
+
+no_attention - Epoch 15/50
+Train Loss: 0.9808, Val Loss: 0.7003
+Type Acc: 0.8005, Treat Acc: 0.8802
+Type F1: 0.7984, Treat F1: 0.8801
+New best model (Val Loss: 0.7003)
+
+no_attention - Epoch 16/50
+Train Loss: 0.9617, Val Loss: 0.7080
+Type Acc: 0.8026, Treat Acc: 0.8755
+Type F1: 0.7994, Treat F1: 0.8751
+
+no_attention - Epoch 17/50
+Train Loss: 0.9538, Val Loss: 0.7041
+Type Acc: 0.7917, Treat Acc: 0.8836
+Type F1: 0.7893, Treat F1: 0.8834
+
+no_attention - Epoch 18/50
+Train Loss: 0.9520, Val Loss: 0.6956
+Type Acc: 0.7978, Treat Acc: 0.8872
+Type F1: 0.7967, Treat F1: 0.8868
+New best model (Val Loss: 0.6956)
+
+no_attention - Epoch 19/50
+Train Loss: 0.9428, Val Loss: 0.7425
+Type Acc: 0.7982, Treat Acc: 0.8758
+Type F1: 0.7961, Treat F1: 0.8754
+
+no_attention - Epoch 20/50
+Train Loss: 0.9265, Val Loss: 0.7401
+Type Acc: 0.7951, Treat Acc: 0.8802
+Type F1: 0.7929, Treat F1: 0.8803
+
+no_attention - Epoch 21/50
+Train Loss: 0.9150, Val Loss: 0.6867
+Type Acc: 0.8076, Treat Acc: 0.8801
+Type F1: 0.8051, Treat F1: 0.8794
+New best model (Val Loss: 0.6867)
+
+no_attention - Epoch 22/50
+Train Loss: 0.9216, Val Loss: 0.6883
+Type Acc: 0.8041, Treat Acc: 0.8904
+Type F1: 0.8025, Treat F1: 0.8898
+
+no_attention - Epoch 23/50
+Train Loss: 0.9102, Val Loss: 0.7614
+Type Acc: 0.7992, Treat Acc: 0.8861
+Type F1: 0.7965, Treat F1: 0.8855
+
+no_attention - Epoch 24/50
+Train Loss: 0.9093, Val Loss: 0.6789
+Type Acc: 0.8095, Treat Acc: 0.8891
+Type F1: 0.8082, Treat F1: 0.8888
+New best model (Val Loss: 0.6789)
+
+no_attention - Epoch 25/50
+Train Loss: 0.9040, Val Loss: 0.6957
+Type Acc: 0.8087, Treat Acc: 0.8741
+Type F1: 0.8076, Treat F1: 0.8746
+
+no_attention - Epoch 26/50
+Train Loss: 0.9283, Val Loss: 0.6650
+Type Acc: 0.8202, Treat Acc: 0.8800
+Type F1: 0.8188, Treat F1: 0.8797
+New best model (Val Loss: 0.6650)
+
+no_attention - Epoch 27/50
+Train Loss: 0.9176, Val Loss: 0.6768
+Type Acc: 0.8091, Treat Acc: 0.8843
+Type F1: 0.8074, Treat F1: 0.8839
+
+no_attention - Epoch 28/50
+Train Loss: 0.9017, Val Loss: 0.6813
+Type Acc: 0.8072, Treat Acc: 0.8891
+Type F1: 0.8053, Treat F1: 0.8888
+
+no_attention - Epoch 29/50
+Train Loss: 0.9078, Val Loss: 0.7376
+Type Acc: 0.7957, Treat Acc: 0.8842
+Type F1: 0.7938, Treat F1: 0.8834
+
+no_attention - Epoch 30/50
+Train Loss: 0.9037, Val Loss: 0.6945
+Type Acc: 0.7996, Treat Acc: 0.8861
+Type F1: 0.7977, Treat F1: 0.8860
+
+no_attention - Epoch 31/50
+Train Loss: 0.9020, Val Loss: 0.7362
+Type Acc: 0.7794, Treat Acc: 0.8797
+Type F1: 0.7769, Treat F1: 0.8797
+Early stopping at epoch 31
+Model saved to: /personal/new_models/no_attention_dataset8_diabetes_type_model.pth
+
+Training no_domain...
+
+no_domain - Epoch 1/50
+Train Loss: 1.7606, Val Loss: 1.0084
+Type Acc: 0.7169, Treat Acc: 0.8399
+Type F1: 0.7155, Treat F1: 0.8399
+New best model (Val Loss: 1.0084)
+
+no_domain - Epoch 2/50
+Train Loss: 1.3277, Val Loss: 0.7985
+Type Acc: 0.7740, Treat Acc: 0.8721
+Type F1: 0.7704, Treat F1: 0.8720
+New best model (Val Loss: 0.7985)
+
+no_domain - Epoch 3/50
+Train Loss: 1.2952, Val Loss: 0.8254
+Type Acc: 0.7793, Treat Acc: 0.8726
+Type F1: 0.7779, Treat F1: 0.8724
+
+no_domain - Epoch 4/50
+Train Loss: 1.3098, Val Loss: 0.8118
+Type Acc: 0.7807, Treat Acc: 0.8719
+Type F1: 0.7780, Treat F1: 0.8716
+
+no_domain - Epoch 5/50
+Train Loss: 1.3417, Val Loss: 0.8693
+Type Acc: 0.7621, Treat Acc: 0.8531
+Type F1: 0.7618, Treat F1: 0.8529
+
+no_domain - Epoch 6/50
+Train Loss: 1.3844, Val Loss: 0.8843
+Type Acc: 0.7548, Treat Acc: 0.8381
+Type F1: 0.7509, Treat F1: 0.8358
+
+no_domain - Epoch 7/50
+Train Loss: 1.3936, Val Loss: 0.8720
+Type Acc: 0.7579, Treat Acc: 0.8696
+Type F1: 0.7536, Treat F1: 0.8695
+Early stopping at epoch 7
+Model saved to: /personal/new_models/no_domain_dataset8_diabetes_type_model.pth
+
+Training Results (Best Validation Metrics):
+no_domain:
+  Val Loss: 0.7985
+  Type Acc: 0.7740
+  Treat Acc: 0.8721
+  Type F1: 0.7704
+  Treat F1: 0.8720

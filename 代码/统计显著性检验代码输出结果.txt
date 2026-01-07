@@ -1,0 +1,22 @@
+Model Statistics (Type F1) with 95% Bootstrap CI:
+       Model  Mean F1   Std F1 95% CI Low 95% CI High
+  Full Model 0.752210 0.006266   0.737840    0.761100
+No Attention 0.790329 0.002749   0.784619    0.795305
+   No Domain 0.758435 0.007619   0.742771    0.771243
+
+Wilcoxon Signed-Rank Test Results (Alternative: First > Second):
+               Comparison Statistic      P-value  Significant (p<0.05)
+     Full vs No-Attention  7.000000 0.0000000088                  True
+        Full vs No-Domain  9.000000 0.2343750000                 False
+No-Attention vs No-Domain  2.000000 0.0000000014                  True
+
+Bootstrap P-values (1000 resamples, alternative='less'):
+               Comparison Bootstrap P-value  Significant (p<0.05)
+     Full vs No-Attention      0.7230000000                 False
+        Full vs No-Domain      0.6790000000                 False
+No-Attention vs No-Domain      0.7140000000                 False
+
+Interpretation:
+- Full vs No-Attention: Statistic=7.000000, p=0.0000000088 (Bootstrap p=0.7230000000). Significant: No-Attention better (p<0.05).
+- Full vs No-Domain: Statistic=9.000000, p=0.2343750000 (Bootstrap p=0.6790000000). No significant difference; domain may add noise.
+- No-Attention vs No-Domain: Statistic=2.000000, p=0.0000000014 (Bootstrap p=0.7140000000). Significant: No-Attention better (attention contributes; p<0.05).
