@@ -1,0 +1,627 @@
+import pandas as pd
+import numpy as np
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import precision_score, accuracy_score, f1_score, recall_score, roc_auc_score, confusion_matrix
+import torch
+import torch.nn as nn
+from torch.utils.data import TensorDataset, DataLoader
+import torch.optim as optim
+from torch.optim.lr_scheduler import ReduceLROnPlateau
+from imblearn.over_sampling import RandomOverSampler
+from imblearn.under_sampling import RandomUnderSampler
+import joblib
+import os
+import shutil
+from collections import defaultdict
+from sklearn.utils import resample
+
+# 设置随机种子
+torch.manual_seed(42)
+np.random.seed(42)
+
+# 检查设备
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print(f"Using device: {device}")
+
+# 加载所有数据集（只需单任务的3个：索引3,5,8）
+all_datasets = [
+    pd.read_csv('diabetes_data.csv'),             # 数据集4 (索引3)
+    pd.read_csv('diabetes_dataset.csv'),          # 数据集6 (索引5)
+    pd.read_csv('Diabetes_prediction.csv')        # 数据集9 (索引8)
+]
+
+# 单任务数据集（索引3、5、8）
+single_task_indices = [0, 1, 2]
+single_task_task_ids = [0, 1, 2]
+single_task_datasets = all_datasets
+
+# 特征定义
+initial_selected_features = [
+    'Age', 'Gender', 'BMI', 'Pregnancy', 'Glucose', 'BloodPressure',
+    'HbA1c_level', 'Smoking'
+]
+numeric_features = ['Age', 'BMI', 'Glucose', 'BloodPressure', 'HbA1c_level']
+binary_features = ['Gender', 'Pregnancy', 'Smoking']
+
+# 特征列名映射
+feature_column_mapping = {
+    'Age': ['Age', 'age'],
+    'Gender': ['Gender', 'gender', 'Sex'],
+    'BMI': ['BMI', 'bmi'],
+    'Pregnancy': ['Pregnancy', 'Pregnancies', 'No of Pregnancy', 'Pregnancy No', 'GestationalDiabetes', 'Pregnancy History', 'No of Pregestation'],
+    'Glucose': ['Glucose', 'glucose', 'FBS', 'blood_glucose_level', 'Blood_Glucose_Level', 'FPG', 'OGTT', 'FastingBloodSugar', 'Blood Glucose Levels'],
+    'BloodPressure': ['BloodPressure', 'Blood Pressure', 'HighBP', 'systolic_bp', 'diastolic_bp', 'Sys BP', 'Dia BP', 'SBP', 'DBP',
+                      'systolic_bp', 'diastolic_bp', 'High_BP'],
+    'HbA1c_level': ['HbA1c_level', 'HbA1c', 'HDL', 'Insulin', 'Insulin_Level', 'Insulin Levels'],
+    'Smoking': ['Smoking', 'smoking', 'Smoker', 'smoking_history', 'Smoking Status']
+}
+
+# 血压特征工程（从原代码复制）
+def generate_blood_pressure_features(df, label_col=None, global_feature_stats=None):
+    sbp_names = ['systolic_bp', 'SBP', 'Sys BP', 'BloodPressure', 'SystolicBP', 'Blood Pressure']
+    dbp_names = ['diastolic_bp', 'DBP', 'Dia BP', 'DiastolicBP']
+    hypertension_names = ['High_BP', 'HighBP', 'hypertension', 'Hypertension']
+    
+    map_values = pd.Series(np.zeros(len(df)), index=df.index)
+    
+    sbp_col = next((col for col in sbp_names if col in df.columns and 'diastolic' not in col), None)
+    dbp_col = next((col for col in dbp_names if col in df), None)
+    
+    if sbp_col and dbp_col:
+        sbp = pd.to_numeric(df[sbp_col], errors='coerce').fillna(0)
+        dbp = pd.to_numeric(df[dbp_col], errors='coerce').fillna(0)
+        map_values = (sbp + 2 * dbp) / 3
+        return map_values
+    
+    elif sbp_col:
+        sbp = pd.to_numeric(df[sbp_col], errors='coerce').fillna(0)
+        dbp = np.clip(sbp / 1.5, 60, 110)
+        map_values = (sbp + 2 * dbp) / 3
+        return map_values
+    
+    hypertension_col = next((col for col in hypertension_names if col in df.columns), None)
+    if hypertension_col is not None or label_col is not None:
+        if hypertension_col:
+            hypertension = df[hypertension_col].astype(int)
+        else:
+            hypertension = df[label_col].map({
+                'Positive': 1, 'Negative': 0, 'Diabetes': 1, 'No diabetes': 0,
+                1: 1, 0: 0, 'Yes': 1, 'No': 0, 'Prediabetes': 1, 'GDM': 1, 
+                'Non GDM': 0, 2: 1, 'True': 1, 'False': 0, 
+                'positive': 1, 'negative': 0, 'YES': 1, 'NO': 0
+            }).fillna(0).astype(int)
+        
+        default_mean = global_feature_stats['BloodPressure']['mean'] if global_feature_stats else 120
+        default_std = global_feature_stats['BloodPressure']['std'] if global_feature_stats else 20
+        sbp = np.where(hypertension == 0, 
+                      np.clip(np.random.normal(default_mean - 10, default_std / 2, len(df)), 90, 120),
+                      np.clip(np.random.normal(default_mean + 40, default_std, len(df)), 140, 180))
+        
+        dbp = np.clip(sbp / 1.5, 60, 110)
+        map_values = (sbp + 2 * dbp) / 3
+        return pd.Series(map_values, index=df.index)
+    
+    default_mean = global_feature_stats['BloodPressure']['mean'] if global_feature_stats else 120
+    default_std = global_feature_stats['BloodPressure']['std'] if global_feature_stats else 20
+    sbp = np.clip(np.random.normal(default_mean, default_std / 2, len(df)), 90, 150)
+    dbp = np.clip(sbp / 1.5, 60, 110)
+    map_values = (sbp + 2 * dbp) / 3
+    print(f"警告：数据集无明确血压信息，使用全局均值 {default_mean} 估算 MAP")
+    return pd.Series(map_values, index=df.index)
+
+# 计算全局特征统计（简化，只用单任务数据集）
+def compute_feature_stats(datasets, numeric_features):
+    feature_stats = {feature: {'means': [], 'stds': []} for feature in numeric_features}
+    for idx, df in enumerate(datasets):
+        df = df.copy()
+        print(f"数据集 {idx + 1} 列名：{df.columns.tolist()}")
+        if idx == 0:  # diabetes_data.csv (索引3)
+            df['Age'] = df['Age'].replace(0, np.nan)
+        elif idx == 1:  # diabetes_dataset.csv (索引5)
+            df['Age'] = df['Age'].replace(0, np.nan)
+        elif idx == 2:  # Diabetes_prediction.csv (索引8)
+            df = df[df['Age'] >= 0]
+            df['Glucose'] = df['Glucose'].replace(0, np.nan)
+            df['BloodPressure'] = df['BloodPressure'].replace(0, np.nan)
+        
+        feature_data = pd.DataFrame(index=df.index)
+        for feature in numeric_features:
+            col = None
+            for col_name in feature_column_mapping[feature]:
+                if col_name in df.columns:
+                    col = df[col_name]
+                    break
+            if col is None:
+                col = pd.Series(np.nan, index=df.index)
+            if feature == 'BloodPressure':
+                bp_col = pd.to_numeric(col, errors='coerce')
+                if pd.Series(bp_col).isna().all():
+                    sys_col = None
+                    dia_col = None
+                    for sys_name in ['systolic_bp', 'Sys BP', 'SBP', 'SystolicBP']:
+                        if sys_name in df.columns:
+                            sys_col = pd.to_numeric(df[sys_name], errors='coerce')
+                            break
+                    for dia_name in ['diastolic_bp', 'Dia BP', 'DBP', 'DiastolicBP']:
+                        if dia_name in df.columns:
+                            dia_col = pd.to_numeric(df[dia_name], errors='coerce')
+                            break
+                    if sys_col is not None and dia_col is not None:
+                        bp_col = (sys_col + 2 * dia_col) / 3
+                    else:
+                        bp_col = generate_blood_pressure_features(df, None, None)
+                col = bp_col
+            feature_data[feature] = pd.to_numeric(col, errors='coerce', downcast='float').astype('float64')
+        for feature in numeric_features:
+            if feature in feature_data.columns and not feature_data[feature].isna().all():
+                feature_stats[feature]['means'].append(feature_data[feature].mean())
+                feature_stats[feature]['stds'].append(feature_data[feature].std())
+    
+    global_stats = {}
+    for feature in numeric_features:
+        if feature_stats[feature]['means']:
+            global_stats[feature] = {
+                'mean': np.mean(feature_stats[feature]['means']),
+                'std': np.mean(feature_stats[feature]['stds'])
+            }
+        else:
+            default_values = {
+                'Age': {'mean': 30.0, 'std': 10.0},
+                'BMI': {'mean': 25.0, 'std': 5.0},
+                'Glucose': {'mean': 140.0, 'std': 30.0},
+                'BloodPressure': {'mean': 120.0, 'std': 20.0},
+                'HbA1c_level': {'mean': 5.0, 'std': 1.0}
+            }
+            global_stats[feature] = default_values[feature]
+    return global_stats
+
+global_feature_stats = compute_feature_stats(single_task_datasets, numeric_features)
+
+# 数据预处理函数（从原代码复制）
+def preprocess_dataset(df, selected_features, label_col, global_feature_stats, dataset_index, training=True):
+    df = df.copy()
+    print(f"数据集 {dataset_index + 1} 列名：{df.columns.tolist()}")
+    
+    # 特定数据集预处理
+    if dataset_index == 3:  # diabetes_data.csv
+        df['Age'] = df['Age'].replace(0, global_feature_stats['Age']['mean'])
+        df['Pregnancies'] = df['Pregnancies'].apply(lambda x: 1 if x > 0 else 0)
+    elif dataset_index == 5:  # diabetes_dataset.csv
+        df['Age'] = df['Age'].replace(0, global_feature_stats['Age']['mean'])
+        df['Pregnancies'] = df['Pregnancies'].apply(lambda x: 1 if x > 0 else 0)
+    elif dataset_index == 8:  # Diabetes_prediction.csv
+        df = df[df['Age'] >= 0]
+        df['Glucose'] = df['Glucose'].replace(0, global_feature_stats['Glucose']['mean'])
+        df['BloodPressure'] = df['BloodPressure'].replace(0, global_feature_stats['BloodPressure']['mean'])
+        df['Pregnancies'] = df['Pregnancies'].apply(lambda x: 1 if x > 0 else 0)
+    
+    feature_data = pd.DataFrame(index=df.index)
+    
+    for feature in numeric_features:
+        col = None
+        for col_name in feature_column_mapping[feature]:
+            if col_name in df.columns:
+                col = df[col_name]
+                break
+        if col is None:
+            col = pd.Series(np.nan, index=df.index)
+        if feature == 'BloodPressure':
+            bp_col = pd.to_numeric(col, errors='coerce')
+            if pd.Series(bp_col).isna().all():
+                sys_col = None
+                dia_col = None
+                for sys_name in ['systolic_bp', 'Sys BP', 'SBP', 'SystolicBP']:
+                    if sys_name in df.columns:
+                        sys_col = pd.to_numeric(df[sys_name], errors='coerce')
+                        break
+                for dia_name in ['diastolic_bp', 'Dia BP', 'DBP', 'DiastolicBP']:
+                    if dia_name in df.columns:
+                        dia_col = pd.to_numeric(df[dia_name], errors='coerce')
+                        break
+                if sys_col is not None and dia_col is not None:
+                    bp_col = (sys_col + 2 * dia_col) / 3
+                else:
+                    bp_col = generate_blood_pressure_features(df, label_col, global_feature_stats)
+            col = bp_col
+        feature_data[feature] = pd.to_numeric(col, errors='coerce').astype(np.float32)
+    
+    for feature in binary_features:
+        col = None
+        for col_name in feature_column_mapping[feature]:
+            if col_name in df.columns:
+                col = df[col_name]
+                break
+        if col is None:
+            col = pd.Series(np.nan, index=df.index)
+        if feature == 'Gender':
+            feature_data['Gender'] = col.map({
+                'Male': 1, 'Female': 0, 'male': 1, 'female': 0, 'Unknown': 0, 'M': 1, 'F': 0,
+                1: 1, 0: 0, '1': 1, '0': 0
+            }).fillna(0).astype(int)
+        elif feature == 'Pregnancy':
+            feature_data['Pregnancy'] = pd.to_numeric(col, errors='coerce').apply(
+                lambda x: 1 if x > 0 else 0 if pd.notnull(x) else 0
+            ).fillna(0).astype(int)
+        elif feature == 'Smoking':
+            feature_data['Smoking'] = col.map({
+                0: 0, 1: 1, 'never': 0, 'current': 1, 'former': 0, 'not current': 0, 'ever': 1,
+                'No': 0, 'Yes': 1, 'no': 0, 'yes': 1, 'Smoker': 1, 'Non-Smoker': 0, 'No Info': 0
+            }).fillna(0).astype(int)
+    
+    for feature in selected_features:
+        if feature not in feature_data.columns or feature_data[feature].isna().all():
+            if feature in numeric_features:
+                mean = global_feature_stats[feature]['mean']
+                std = global_feature_stats[feature]['std']
+                feature_data[feature] = np.random.normal(mean, std, size=len(feature_data)).astype(np.float32)
+            else:
+                feature_data[feature] = 0
+    
+    features = feature_data[selected_features]
+    for feature in features.columns:
+        if feature in numeric_features:
+            features[feature] = pd.to_numeric(features[feature], errors='coerce').astype(np.float32)
+        else:
+            features[feature] = pd.to_numeric(features[feature], errors='coerce').astype(int)
+    
+    # 标签处理
+    if label_col in df.columns:
+        if label_col == 'Diabetes_012':
+            df['Diagnosis'] = df[label_col].apply(lambda x: 1 if x in [1, 2] else 0 if x == 0 else np.nan)
+        elif label_col == 'Class Label(GDM /Non GDM)':
+            if df[label_col].dtype in ['int64', 'int32', 'float64', 'float32']:
+                df['Diagnosis'] = df[label_col].astype(int)
+            else:
+                df['Diagnosis'] = df[label_col].str.lower().map({
+                    'gdm': 1, 'non gdm': 0, 'gdm ': 1, 'non gdm ': 0
+                })
+        else:
+            df['Diagnosis'] = df[label_col].map({
+                'Positive': 1, 'Negative': 0, 'Diabetes': 1, 'No diabetes': 0,
+                1: 1, 0: 0, 'Yes': 1, 'No': 0, 'Prediabetes': 1, 'GDM': 1, 'Non GDM': 0, 2: 1,
+                'True': 1, 'False': 0, 'positive': 1, 'negative': 0, 'YES': 1, 'NO': 0
+            })
+        
+        if df['Diagnosis'].isna().any():
+            print(f"警告：数据集 {dataset_index + 1} 在 {label_col} 中有未映射的标签：{df[label_col][df['Diagnosis'].isna()].unique()}")
+            df['Diagnosis'] = df['Diagnosis'].fillna(0).astype(int)
+        
+        labels = df['Diagnosis'].astype(int)
+        if len(np.unique(labels)) <= 1:
+            print(f"警告：数据集 {dataset_index + 1} 只有 {len(np.unique(labels))} 个类别。唯一标签：{labels.unique()}")
+            return None, None
+    else:
+        print(f"错误：数据集 {dataset_index + 1} 未找到标签列 {label_col}。")
+        return None, None
+    
+    return features, labels
+
+# 单任务数据集处理
+single_task_features = [None] * len(single_task_indices)
+single_task_labels = [None] * len(single_task_indices)
+single_task_scalers = [None] * len(single_task_indices)
+
+for i, (task_id, dataset_idx, df) in enumerate(zip(single_task_task_ids, single_task_indices, single_task_datasets)):
+    label_col = next((col for col in ['Diagnosis', 'diabetes', 'Outcome', 'Diabetes', 'Target', 
+                                      'Prediction', 'Class Label(GDM /Non GDM)', 'Diabetes_012', 'class']
+                      if col in df.columns), None)
+    
+    if label_col:
+        print(f"数据集 {dataset_idx + 1} - 标签列：{label_col}，唯一值：{df[label_col].unique()}")
+        # 数据预处理
+        features, labels = preprocess_dataset(df, initial_selected_features, label_col, global_feature_stats, dataset_idx)
+        
+        if features is not None and labels is not None:
+            # 保存特征顺序
+            feature_order = features.columns.tolist()
+            
+            X, y = features.values, labels.values
+            
+            # 平衡采样
+            target_sample_size = int(np.median([len(d) for d in single_task_datasets]))
+            if len(np.unique(y)) > 1:
+                if len(X) < target_sample_size:
+                    oversampler = RandomOverSampler(random_state=42)
+                    X, y = oversampler.fit_resample(X, y)
+                elif len(X) > target_sample_size:
+                    undersampler = RandomUnderSampler(random_state=42)
+                    X, y = undersampler.fit_resample(X, y)
+            
+            # 标准化数值特征
+            scaler = StandardScaler()
+            numeric_indices = [feature_order.index(f) for f in numeric_features if f in feature_order]
+            X[:, numeric_indices] = scaler.fit_transform(X[:, numeric_indices])
+            
+            # 保存 scaler
+            scaler_info = {
+                'scaler': scaler,
+                'feature_order': feature_order,
+                'numeric_features': numeric_features,
+                'task_id': task_id
+            }
+            
+            scaler_path = f"C:/Users/莫冰/Desktop/test/single_task_scaler_{task_id}.pkl"
+            joblib.dump(scaler_info, scaler_path)
+            print(f"保存单任务标准化器 任务 {task_id}，路径：{scaler_path}")
+            
+            single_task_features[i] = X
+            single_task_labels[i] = pd.Series(y)
+            single_task_scalers[i] = scaler_info
+        else:
+            print(f"警告：数据集 {dataset_idx + 1} 处理失败，跳过")
+            single_task_features[i] = None
+            single_task_labels[i] = None
+            single_task_scalers[i] = None
+    else:
+        print(f"错误：数据集 {dataset_idx + 1} 未找到有效标签列")
+        single_task_features[i] = None
+        single_task_labels[i] = None
+        single_task_scalers[i] = None
+
+# 诊断指标计算函数
+def compute_diagnostic_metrics(y_true, y_prob, y_pred=None, n_bootstrap=1000):
+    auc = roc_auc_score(y_true, y_prob)
+    
+    # Bootstrap 95% CI
+    auc_boots = []
+    n = len(y_true)
+    for _ in range(n_bootstrap):
+        idx = resample(range(n), replace=True)
+        y_true_boot = y_true[idx]
+        y_prob_boot = y_prob[idx]
+        auc_boot = roc_auc_score(y_true_boot, y_prob_boot)
+        auc_boots.append(auc_boot)
+    ci_lower = np.percentile(auc_boots, 2.5)
+    ci_upper = np.percentile(auc_boots, 97.5)
+    
+    if y_pred is None:
+        y_pred = (y_prob > 0.5).astype(int)
+    tn, fp, fn, tp = confusion_matrix(y_true, y_pred).ravel()
+    se = tp / (tp + fn) if (tp + fn) > 0 else 0
+    sp = tn / (tn + fp) if (tn + fp) > 0 else 0
+    
+    return {
+        'AUC': auc,
+        'AUC_95CI': f"{auc:.3f} ({ci_lower:.3f}-{ci_upper:.3f})",
+        'Sensitivity (Se)': se,
+        'Specificity (Sp)': sp
+    }
+
+# 数据清洗函数
+def clean_data(features, labels):
+    features = np.nan_to_num(features, nan=0.0, posinf=0.0, neginf=0.0)
+    labels = np.array(labels, dtype=np.int64)
+    labels = np.clip(labels, 0, 1)
+    return features, labels
+
+# 单任务模型定义
+class SingleTaskDiabetesModel(nn.Module):
+    def __init__(self, input_dim, hidden_dim):
+        super(SingleTaskDiabetesModel, self).__init__()
+        self.shared_layer = nn.Sequential(
+            nn.Linear(input_dim, hidden_dim * 2),
+            nn.BatchNorm1d(hidden_dim * 2),
+            nn.ReLU(),
+            nn.Dropout(0.4),
+            nn.Linear(hidden_dim * 2, hidden_dim),
+            nn.BatchNorm1d(hidden_dim),
+            nn.ReLU(),
+            nn.Dropout(0.4),
+            nn.Linear(hidden_dim, hidden_dim),
+            nn.BatchNorm1d(hidden_dim),
+            nn.ReLU(),
+            nn.Dropout(0.4)
+        )
+        self.task_head = nn.Sequential(
+            nn.Linear(hidden_dim, hidden_dim // 2),
+            nn.BatchNorm1d(hidden_dim // 2),
+            nn.ReLU(),
+            nn.Dropout(0.4),
+            nn.Linear(hidden_dim // 2, 2)
+        )
+        self._initialize_weights()
+    
+    def _initialize_weights(self):
+        for module in self.modules():
+            if isinstance(module, nn.Linear):
+                nn.init.xavier_uniform_(module.weight)
+                if module.bias is not None:
+                    nn.init.zeros_(module.bias)
+    
+    def forward(self, x):
+        shared_features = self.shared_layer(x)
+        logits = self.task_head(shared_features)
+        return logits
+
+# 准备单任务数据
+single_task_train_loaders = []
+single_task_val_loaders = []
+single_task_criteria = []
+single_task_class_weights = []
+
+for i, (task_id, features, labels, scaler_info) in enumerate(zip(single_task_task_ids, single_task_features, single_task_labels, single_task_scalers)):
+    if features is None or labels is None:
+        print(f"任务 {task_id} 数据无效，跳过")
+        single_task_train_loaders.append(None)
+        single_task_val_loaders.append(None)
+        single_task_criteria.append(None)
+        single_task_class_weights.append(None)
+        continue
+    
+    # 清洗数据
+    features, labels = clean_data(features, labels)
+    
+    # 计算类权重
+    label_counts = pd.Series(labels).value_counts()
+    print(f"单任务 {task_id} 标签分布: {label_counts.to_dict()}")
+    neg_count = (labels == 0).sum()
+    pos_count = (labels == 1).sum()
+    total = len(labels)
+    if neg_count == 0 or pos_count == 0:
+        weight_for_0 = 1.0
+        weight_for_1 = 1.0
+    else:
+        weight_for_0 = (1 / neg_count) * total / 2.0
+        weight_for_1 = (1 / pos_count) * total / 2.0
+    class_weights = torch.tensor([weight_for_0, weight_for_1], dtype=torch.float32).to(device)
+    single_task_class_weights.append(class_weights)
+    
+    # 转换为 Tensor
+    features_tensor = torch.tensor(features, dtype=torch.float32)
+    labels_tensor = torch.tensor(labels, dtype=torch.long)
+    
+    # 拆分训练/验证
+    features_train, features_val, labels_train, labels_val = train_test_split(
+        features_tensor, labels_tensor, test_size=0.2, random_state=42, stratify=labels_tensor
+    )
+    
+    # DataLoader
+    train_dataset = TensorDataset(features_train, labels_train)
+    val_dataset = TensorDataset(features_val, labels_val)
+    train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
+    val_loader = DataLoader(val_dataset, batch_size=32, shuffle=False)
+    
+    single_task_train_loaders.append(train_loader)
+    single_task_val_loaders.append(val_loader)
+    
+    # 损失函数
+    criterion = nn.CrossEntropyLoss(weight=class_weights)
+    single_task_criteria.append(criterion)
+
+# 独立训练每个单任务模型
+single_task_histories = {}
+single_task_results_dfs = []
+
+for task_id, (train_loader, val_loader, criterion) in enumerate(zip(single_task_train_loaders, single_task_val_loaders, single_task_criteria)):
+    if train_loader is None:
+        continue
+    
+    print(f"\n--- 单任务 {task_id} 训练开始 ---")
+    
+    # 初始化模型
+    model = SingleTaskDiabetesModel(
+        input_dim=len(initial_selected_features),
+        hidden_dim=128
+    ).to(device)
+    
+    optimizer = optim.Adam(model.parameters(), lr=0.0005, weight_decay=5e-4)
+    scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.2, patience=2)
+    best_val_loss = float('inf')
+    patience_count = 0
+    best_model_path = f"C:/Users/莫冰/Desktop/test/best_single_task_{task_id}_model.pth"
+    final_model_path = f"C:/Users/莫冰/Desktop/test/single_task_{task_id}_model.pth"
+    
+    history = {'train_loss': [], 'val_loss': [], 'metrics': defaultdict(list)}
+    
+    for epoch in range(50):
+        model.train()
+        total_train_loss = 0.0
+        train_preds = []
+        train_targets = []
+        
+        for batch_features, batch_labels in train_loader:
+            batch_features, batch_labels = batch_features.to(device), batch_labels.to(device)
+            optimizer.zero_grad()
+            logits = model(batch_features)
+            loss = criterion(logits, batch_labels)
+            if torch.isnan(loss):
+                continue
+            loss.backward()
+            torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
+            optimizer.step()
+            total_train_loss += loss.item()
+            
+            train_preds.extend(torch.argmax(logits, dim=1).cpu().numpy())
+            train_targets.extend(batch_labels.cpu().numpy())
+        
+        avg_train_loss = total_train_loss / len(train_loader)
+        history['train_loss'].append(avg_train_loss)
+        
+        # 验证（包含 AUC/Se/Sp）
+        model.eval()
+        total_val_loss = 0.0
+        val_probs = []
+        val_preds = []
+        val_targets = []
+        
+        with torch.no_grad():
+            for batch_features, batch_labels in val_loader:
+                batch_features, batch_labels = batch_features.to(device), batch_labels.to(device)
+                logits = model(batch_features)
+                probs = torch.softmax(logits, dim=1)[:, 1].cpu().numpy()
+                preds = torch.argmax(logits, dim=1).cpu().numpy()
+                
+                loss = criterion(logits, batch_labels)
+                total_val_loss += loss.item()
+                
+                val_probs.extend(probs)
+                val_preds.extend(preds)
+                val_targets.extend(batch_labels.cpu().numpy())
+        
+        avg_val_loss = total_val_loss / len(val_loader)
+        history['val_loss'].append(avg_val_loss)
+        
+        # 计算指标
+        y_true = np.array(val_targets)
+        y_prob = np.array(val_probs)
+        y_pred = np.array(val_preds)
+        metrics = compute_diagnostic_metrics(y_true, y_prob, y_pred)
+        
+        precision = precision_score(y_true, y_pred, average='weighted', zero_division=0)
+        recall = recall_score(y_true, y_pred, average='weighted', zero_division=0)
+        f1 = f1_score(y_true, y_pred, average='weighted', zero_division=0)
+        
+        print(f"Epoch {epoch+1}/50 - Task {task_id}: Train Loss: {avg_train_loss:.4f}, Val Loss: {avg_val_loss:.4f}")
+        print(f"  Precision: {precision:.4f}, Recall: {recall:.4f}, F1: {f1:.4f}")
+        print(f"  {metrics}")
+        
+        # 保存历史
+        history['metrics']['precision'].append(precision)
+        history['metrics']['recall'].append(recall)
+        history['metrics']['f1'].append(f1)
+        history['metrics']['AUC'].append(metrics['AUC'])
+        history['metrics']['Se'].append(metrics['Sensitivity (Se)'])
+        history['metrics']['Sp'].append(metrics['Specificity (Sp)'])
+        history['metrics']['AUC_95CI'].append(metrics['AUC_95CI'])
+        
+        # 早停
+        if avg_val_loss < best_val_loss:
+            best_val_loss = avg_val_loss
+            patience_count = 0
+            torch.save(model.state_dict(), best_model_path)
+        else:
+            patience_count += 1
+            if patience_count >= 5:
+                print(f"Early stopping at epoch {epoch+1}")
+                break
+        
+        scheduler.step(avg_val_loss)
+    
+    # 保存模型
+    shutil.copy(best_model_path, final_model_path)
+    if os.path.exists(best_model_path):
+        os.remove(best_model_path)
+    print(f"单任务 {task_id} 模型保存至: {final_model_path}")
+    
+    # 保存结果 CSV
+    task_results_df = pd.DataFrame({
+        'Task_ID': [task_id],
+        'AUC_95CI': [history['metrics']['AUC_95CI'][-1]],
+        'Se': [history['metrics']['Se'][-1]],
+        'Sp': [history['metrics']['Sp'][-1]]
+    })
+    single_task_results_dfs.append(task_results_df)
+    task_results_csv = f"C:/Users/莫冰/Desktop/test/single_task_{task_id}_metrics.csv"
+    task_results_df.to_csv(task_results_csv, index=False)
+    print(f"单任务 {task_id} 结果保存至: {task_results_csv}")
+
+# 合并所有单任务结果
+if single_task_results_dfs:
+    all_single_results = pd.concat(single_task_results_dfs, ignore_index=True)
+    all_single_csv = "C:/Users/莫冰/Desktop/test/all_single_task_diagnostic_metrics.csv"
+    all_single_results.to_csv(all_single_csv, index=False)
+    print(f"所有单任务结果保存至: {all_single_csv}")
+    print(all_single_results)
+
+print("=== 单任务模型训练结束 ===")

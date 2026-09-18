@@ -1,0 +1,177 @@
+Using device: cuda
+数据集 8 列名：['Target', 'Genetic Markers', 'Autoantibodies', 'Family History', 'Environmental Factors', 'Insulin Levels', 'Age', 'BMI', 'Physical Activity', 'Dietary Habits', 'Blood Pressure', 'Cholesterol Levels', 'Waist Circumference', 'Blood Glucose Levels', 'Ethnicity', 'Socioeconomic Factors', 'Smoking Status', 'Alcohol Consumption', 'Glucose Tolerance Test', 'History of PCOS', 'Previous Gestational Diabetes', 'Pregnancy History', 'Weight Gain During Pregnancy', 'Pancreatic Health', 'Pulmonary Function', 'Cystic Fibrosis Diagnosis', 'Steroid Use History', 'Genetic Testing', 'Neurological Assessments', 'Liver Function Tests', 'Digestive Enzyme Levels', 'Urine Test', 'Birth Weight', 'Early Onset Symptoms']
+数据集 8 - 标签列：Target，原始唯一值：['Steroid-Induced Diabetes' 'Neonatal Diabetes Mellitus (NDM)'
+ 'Prediabetic' 'Type 1 Diabetes' 'Wolfram Syndrome' 'LADA'
+ 'Type 2 Diabetes' 'Wolcott-Rallison Syndrome' 'Secondary Diabetes'
+ 'Type 3c Diabetes (Pancreatogenic Diabetes)' 'Gestational Diabetes'
+ 'Cystic Fibrosis-Related Diabetes (CFRD)' 'MODY']
+数据集 8 - 标准化后的类型标签唯一值：['Steroid-Induced Diabetes' 'NDM' 'Prediabetic' 'Type 1 Diabetes'
+ 'Wolfram Syndrome' 'LADA' 'Type 2 Diabetes' 'Unknown'
+ 'Secondary Diabetes' 'Type 3c Diabetes' 'CFRD' 'MODY']
+糖尿病类型标签映射：{'CFRD': 0, 'LADA': 1, 'MODY': 2, 'NDM': 3, 'Prediabetic': 4, 'Secondary Diabetes': 5, 'Steroid-Induced Diabetes': 6, 'Type 1 Diabetes': 7, 'Type 2 Diabetes': 8, 'Type 3c Diabetes': 9, 'Unknown': 10, 'Wolfram Syndrome': 11}
+治疗标签映射：{'Insulin-Dependent': 0, 'No Special Treatment': 1, 'Oral Medications': 2, 'Unknown Treatment': 3}
+类型数据集特征顺序：['Age', 'Blood Glucose Levels', 'Blood Pressure', 'Weight Gain During Pregnancy', 'BMI', 'Digestive Enzyme Levels', 'Waist Circumference', 'Insulin Levels', 'Cholesterol Levels', 'Pulmonary Function']
+保存类型数据集标准化器，特征顺序：['Age', 'Blood Glucose Levels', 'Blood Pressure', 'Weight Gain During Pregnancy', 'BMI', 'Digestive Enzyme Levels', 'Waist Circumference', 'Insulin Levels', 'Cholesterol Levels', 'Pulmonary Function']，路径：type_scaler.pkl
+
+Epoch 1/50
+Train Loss: 1.6996, Val Loss: 0.8864
+Type Acc: 0.7603, Treat Acc: 0.8794, Domain Acc: 1.0000
+Type F1: 0.7568, Treat F1: 0.8807
+
+Per Diabetes Type Metrics:
+CFRD: Precision: 0.8501, Recall: 0.7655, F1: 0.8056, AUC: 0.9833, Se: 0.7655, Sq: 0.9789
+LADA: Precision: 0.7553, Recall: 0.9079, F1: 0.8246, AUC: 0.9899, Se: 0.9079, Sq: 0.9915
+MODY: Precision: 0.7101, Recall: 0.8525, F1: 0.7748, AUC: 0.9846, Se: 0.8525, Sq: 0.9863
+NDM: Precision: 0.9589, Recall: 0.9981, F1: 0.9781, AUC: 1.0000, Se: 0.9981, Sq: 0.9998
+Prediabetic: Precision: 0.8428, Recall: 0.9083, F1: 0.8744, AUC: 0.9941, Se: 0.9083, Sq: 0.9916
+Secondary Diabetes: Precision: 0.6477, Recall: 0.5337, F1: 0.5852, AUC: 0.9496, Se: 0.5337, Sq: 0.9583
+Steroid-Induced Diabetes: Precision: 0.6137, Recall: 0.6217, F1: 0.6177, AUC: 0.9548, Se: 0.6217, Sq: 0.9656
+Type 1 Diabetes: Precision: 0.8137, Recall: 0.7887, F1: 0.8010, AUC: 0.9897, Se: 0.7887, Sq: 0.9808
+Type 2 Diabetes: Precision: 0.7748, Recall: 0.5812, F1: 0.6642, AUC: 0.9733, Se: 0.5812, Sq: 0.9628
+Type 3c Diabetes: Precision: 0.5653, Recall: 0.7658, F1: 0.6505, AUC: 0.9652, Se: 0.7658, Sq: 0.9780
+Unknown: Precision: 0.7634, Recall: 0.5242, F1: 0.6216, AUC: 0.9494, Se: 0.5242, Sq: 0.9580
+Wolfram Syndrome: Precision: 0.8927, Recall: 0.8753, F1: 0.8839, AUC: 0.9968, Se: 0.8753, Sq: 0.9887
+
+Treatment Consistency: 1.0000
+New best model (Val Loss: 0.8864)
+
+Epoch 2/50
+Train Loss: 1.2577, Val Loss: 0.7089
+Type Acc: 0.7928, Treat Acc: 0.9089, Domain Acc: 1.0000
+Type F1: 0.7876, Treat F1: 0.9096
+
+Per Diabetes Type Metrics:
+CFRD: Precision: 0.9009, Recall: 0.7864, F1: 0.8398, AUC: 0.9872, Se: 0.7864, Sq: 0.9808
+LADA: Precision: 0.8341, Recall: 0.9009, F1: 0.8662, AUC: 0.9938, Se: 0.9009, Sq: 0.9909
+MODY: Precision: 0.7833, Recall: 0.8581, F1: 0.8190, AUC: 0.9905, Se: 0.8581, Sq: 0.9870
+NDM: Precision: 0.9940, Recall: 0.9981, F1: 0.9961, AUC: 1.0000, Se: 0.9981, Sq: 0.9998
+Prediabetic: Precision: 0.8292, Recall: 0.9851, F1: 0.9005, AUC: 0.9975, Se: 0.9851, Sq: 0.9986
+Secondary Diabetes: Precision: 0.6594, Recall: 0.5928, F1: 0.6244, AUC: 0.9585, Se: 0.5928, Sq: 0.9633
+Steroid-Induced Diabetes: Precision: 0.6368, Recall: 0.6803, F1: 0.6578, AUC: 0.9649, Se: 0.6803, Sq: 0.9708
+Type 1 Diabetes: Precision: 0.8618, Recall: 0.8762, F1: 0.8689, AUC: 0.9953, Se: 0.8762, Sq: 0.9887
+Type 2 Diabetes: Precision: 0.8855, Recall: 0.5328, F1: 0.6653, AUC: 0.9785, Se: 0.5328, Sq: 0.9590
+Type 3c Diabetes: Precision: 0.5825, Recall: 0.8217, F1: 0.6817, AUC: 0.9733, Se: 0.8217, Sq: 0.9832
+Unknown: Precision: 0.8854, Recall: 0.5000, F1: 0.6391, AUC: 0.9771, Se: 0.5000, Sq: 0.9563
+Wolfram Syndrome: Precision: 0.8190, Recall: 0.9814, F1: 0.8929, AUC: 0.9969, Se: 0.9814, Sq: 0.9983
+
+Treatment Consistency: 1.0000
+New best model (Val Loss: 0.7089)
+
+Epoch 3/50
+Train Loss: 1.2295, Val Loss: 0.7313
+Type Acc: 0.7939, Treat Acc: 0.8967, Domain Acc: 1.0000
+Type F1: 0.7906, Treat F1: 0.8987
+
+Per Diabetes Type Metrics:
+CFRD: Precision: 0.9204, Recall: 0.7697, F1: 0.8383, AUC: 0.9872, Se: 0.7697, Sq: 0.9794
+LADA: Precision: 0.8511, Recall: 0.8618, F1: 0.8564, AUC: 0.9932, Se: 0.8618, Sq: 0.9874
+MODY: Precision: 0.8626, Recall: 0.7101, F1: 0.7790, AUC: 0.9892, Se: 0.7101, Sq: 0.9741
+NDM: Precision: 0.9917, Recall: 0.9991, F1: 0.9954, AUC: 1.0000, Se: 0.9991, Sq: 0.9999
+Prediabetic: Precision: 0.8008, Recall: 0.9898, F1: 0.8853, AUC: 0.9967, Se: 0.9898, Sq: 0.9990
+Secondary Diabetes: Precision: 0.6491, Recall: 0.5975, F1: 0.6222, AUC: 0.9602, Se: 0.5975, Sq: 0.9637
+Steroid-Induced Diabetes: Precision: 0.7176, Recall: 0.5700, F1: 0.6354, AUC: 0.9620, Se: 0.5700, Sq: 0.9616
+Type 1 Diabetes: Precision: 0.7708, Recall: 0.9609, F1: 0.8554, AUC: 0.9948, Se: 0.9609, Sq: 0.9964
+Type 2 Diabetes: Precision: 0.7734, Recall: 0.6543, F1: 0.7088, AUC: 0.9771, Se: 0.6543, Sq: 0.9690
+Type 3c Diabetes: Precision: 0.6175, Recall: 0.8478, F1: 0.7145, AUC: 0.9752, Se: 0.8478, Sq: 0.9857
+Unknown: Precision: 0.7468, Recall: 0.6550, F1: 0.6979, AUC: 0.9742, Se: 0.6550, Sq: 0.9690
+Wolfram Syndrome: Precision: 0.8863, Recall: 0.9107, F1: 0.8983, AUC: 0.9969, Se: 0.9107, Sq: 0.9919
+
+Treatment Consistency: 1.0000
+
+Epoch 4/50
+Train Loss: 1.2516, Val Loss: 0.7837
+Type Acc: 0.7888, Treat Acc: 0.8907, Domain Acc: 1.0000
+Type F1: 0.7851, Treat F1: 0.8944
+
+Per Diabetes Type Metrics:
+CFRD: Precision: 0.9338, Recall: 0.7217, F1: 0.8142, AUC: 0.9857, Se: 0.7217, Sq: 0.9752
+LADA: Precision: 0.8439, Recall: 0.8274, F1: 0.8355, AUC: 0.9844, Se: 0.8274, Sq: 0.9843
+MODY: Precision: 0.7388, Recall: 0.8869, F1: 0.8061, AUC: 0.9887, Se: 0.8869, Sq: 0.9895
+NDM: Precision: 0.9967, Recall: 0.9944, F1: 0.9956, AUC: 1.0000, Se: 0.9944, Sq: 0.9995
+Prediabetic: Precision: 0.8235, Recall: 0.9837, F1: 0.8965, AUC: 0.9969, Se: 0.9837, Sq: 0.9985
+Secondary Diabetes: Precision: 0.6833, Recall: 0.6114, F1: 0.6454, AUC: 0.9608, Se: 0.6114, Sq: 0.9650
+Steroid-Induced Diabetes: Precision: 0.8080, Recall: 0.4718, F1: 0.5958, AUC: 0.9565, Se: 0.4718, Sq: 0.9537
+Type 1 Diabetes: Precision: 0.9027, Recall: 0.7818, F1: 0.8379, AUC: 0.9949, Se: 0.7818, Sq: 0.9804
+Type 2 Diabetes: Precision: 0.7031, Recall: 0.7161, F1: 0.7095, AUC: 0.9770, Se: 0.7161, Sq: 0.9741
+Type 3c Diabetes: Precision: 0.5995, Recall: 0.8496, F1: 0.7030, AUC: 0.9738, Se: 0.8496, Sq: 0.9858
+Unknown: Precision: 0.7043, Recall: 0.6629, F1: 0.6830, AUC: 0.9724, Se: 0.6629, Sq: 0.9695
+Wolfram Syndrome: Precision: 0.8463, Recall: 0.9581, F1: 0.8987, AUC: 0.9971, Se: 0.9581, Sq: 0.9961
+
+Treatment Consistency: 1.0000
+
+Epoch 5/50
+Train Loss: 1.3048, Val Loss: 0.8131
+Type Acc: 0.7783, Treat Acc: 0.8710, Domain Acc: 1.0000
+Type F1: 0.7728, Treat F1: 0.8764
+
+Per Diabetes Type Metrics:
+CFRD: Precision: 0.9228, Recall: 0.7068, F1: 0.8005, AUC: 0.9855, Se: 0.7068, Sq: 0.9739
+LADA: Precision: 0.7181, Recall: 0.9079, F1: 0.8019, AUC: 0.9904, Se: 0.9079, Sq: 0.9914
+MODY: Precision: 0.8118, Recall: 0.7966, F1: 0.8041, AUC: 0.9876, Se: 0.7966, Sq: 0.9815
+NDM: Precision: 0.9755, Recall: 1.0000, F1: 0.9876, AUC: 1.0000, Se: 1.0000, Sq: 1.0000
+Prediabetic: Precision: 0.7912, Recall: 0.9665, F1: 0.8701, AUC: 0.9962, Se: 0.9665, Sq: 0.9969
+Secondary Diabetes: Precision: 0.6886, Recall: 0.5835, F1: 0.6317, AUC: 0.9619, Se: 0.5835, Sq: 0.9627
+Steroid-Induced Diabetes: Precision: 0.6756, Recall: 0.5533, F1: 0.6083, AUC: 0.9593, Se: 0.5533, Sq: 0.9600
+Type 1 Diabetes: Precision: 0.8206, Recall: 0.9218, F1: 0.8683, AUC: 0.9923, Se: 0.9218, Sq: 0.9928
+Type 2 Diabetes: Precision: 0.8993, Recall: 0.5109, F1: 0.6516, AUC: 0.9752, Se: 0.5109, Sq: 0.9572
+Type 3c Diabetes: Precision: 0.5573, Recall: 0.9241, F1: 0.6953, AUC: 0.9753, Se: 0.9241, Sq: 0.9927
+Unknown: Precision: 0.7985, Recall: 0.5517, F1: 0.6525, AUC: 0.9560, Se: 0.5517, Sq: 0.9604
+Wolfram Syndrome: Precision: 0.8858, Recall: 0.9167, F1: 0.9010, AUC: 0.9973, Se: 0.9167, Sq: 0.9924
+
+Treatment Consistency: 1.0000
+
+Epoch 6/50
+Train Loss: 1.3420, Val Loss: 0.8182
+Type Acc: 0.7668, Treat Acc: 0.8765, Domain Acc: 1.0000
+Type F1: 0.7658, Treat F1: 0.8838
+
+Per Diabetes Type Metrics:
+CFRD: Precision: 0.8548, Recall: 0.7343, F1: 0.7900, AUC: 0.9845, Se: 0.7343, Sq: 0.9761
+LADA: Precision: 0.9163, Recall: 0.7385, F1: 0.8178, AUC: 0.9861, Se: 0.7385, Sq: 0.9766
+MODY: Precision: 0.8309, Recall: 0.7134, F1: 0.7677, AUC: 0.9841, Se: 0.7134, Sq: 0.9743
+NDM: Precision: 0.9935, Recall: 0.9986, F1: 0.9961, AUC: 1.0000, Se: 0.9986, Sq: 0.9999
+Prediabetic: Precision: 0.8268, Recall: 0.9749, F1: 0.8947, AUC: 0.9970, Se: 0.9749, Sq: 0.9977
+Secondary Diabetes: Precision: 0.6875, Recall: 0.5435, F1: 0.6071, AUC: 0.9537, Se: 0.5435, Sq: 0.9593
+Steroid-Induced Diabetes: Precision: 0.7339, Recall: 0.4877, F1: 0.5860, AUC: 0.9651, Se: 0.4877, Sq: 0.9548
+Type 1 Diabetes: Precision: 0.8759, Recall: 0.8474, F1: 0.8614, AUC: 0.9935, Se: 0.8474, Sq: 0.9862
+Type 2 Diabetes: Precision: 0.8814, Recall: 0.5500, F1: 0.6774, AUC: 0.9767, Se: 0.5500, Sq: 0.9604
+Type 3c Diabetes: Precision: 0.4979, Recall: 0.9474, F1: 0.6528, AUC: 0.9711, Se: 0.9474, Sq: 0.9948
+Unknown: Precision: 0.5820, Recall: 0.7020, F1: 0.6364, AUC: 0.9559, Se: 0.7020, Sq: 0.9724
+Wolfram Syndrome: Precision: 0.8478, Recall: 0.9642, F1: 0.9022, AUC: 0.9969, Se: 0.9642, Sq: 0.9967
+
+Treatment Consistency: 1.0000
+
+Epoch 7/50
+Train Loss: 1.3318, Val Loss: 0.8629
+Type Acc: 0.7859, Treat Acc: 0.9120, Domain Acc: 1.0000
+Type F1: 0.7810, Treat F1: 0.9118
+
+Per Diabetes Type Metrics:
+CFRD: Precision: 0.8382, Recall: 0.8101, F1: 0.8239, AUC: 0.9852, Se: 0.8101, Sq: 0.9828
+LADA: Precision: 0.9108, Recall: 0.7790, F1: 0.8397, AUC: 0.9886, Se: 0.7790, Sq: 0.9802
+MODY: Precision: 0.7614, Recall: 0.8599, F1: 0.8077, AUC: 0.9890, Se: 0.8599, Sq: 0.9871
+NDM: Precision: 0.9840, Recall: 1.0000, F1: 0.9919, AUC: 1.0000, Se: 1.0000, Sq: 1.0000
+Prediabetic: Precision: 0.8515, Recall: 0.9502, F1: 0.8982, AUC: 0.9963, Se: 0.9502, Sq: 0.9954
+Secondary Diabetes: Precision: 0.7948, Recall: 0.4109, F1: 0.5417, AUC: 0.9500, Se: 0.4109, Sq: 0.9487
+Steroid-Induced Diabetes: Precision: 0.5681, Recall: 0.6524, F1: 0.6073, AUC: 0.9521, Se: 0.6524, Sq: 0.9680
+Type 1 Diabetes: Precision: 0.8624, Recall: 0.8753, F1: 0.8688, AUC: 0.9930, Se: 0.8753, Sq: 0.9886
+Type 2 Diabetes: Precision: 0.7279, Recall: 0.6985, F1: 0.7129, AUC: 0.9750, Se: 0.6985, Sq: 0.9727
+Type 3c Diabetes: Precision: 0.6088, Recall: 0.7984, F1: 0.6908, AUC: 0.9704, Se: 0.7984, Sq: 0.9811
+Unknown: Precision: 0.7835, Recall: 0.6131, F1: 0.6879, AUC: 0.9663, Se: 0.6131, Sq: 0.9655
+Wolfram Syndrome: Precision: 0.8308, Recall: 0.9828, F1: 0.9004, AUC: 0.9966, Se: 0.9828, Sq: 0.9984
+
+Treatment Consistency: 1.0000
+Early stopping at epoch 7
+Model saved to: dataset8_diabetes_type_model.pth
+Metrics saved to: dataset8_metrics.csv
+
+=== Average Metrics Across All Diabetes Types (Per Epoch) ===
+Epoch 1: Avg AUC = 0.9776, Avg Se = 0.7602, Avg Sq = 0.9784
+Epoch 2: Avg AUC = 0.9845, Avg Se = 0.7928, Avg Sq = 0.9814
+Epoch 3: Avg AUC = 0.9839, Avg Se = 0.7939, Avg Sq = 0.9814
+Epoch 4: Avg AUC = 0.9823, Avg Se = 0.7888, Avg Sq = 0.9810
+Epoch 5: Avg AUC = 0.9814, Avg Se = 0.7783, Avg Sq = 0.9802
+Epoch 6: Avg AUC = 0.9804, Avg Se = 0.7668, Avg Sq = 0.9791
+Epoch 7: Avg AUC = 0.9802, Avg Se = 0.7859, Avg Sq = 0.9807
+
+Overall Average (All Epochs): AUC = 0.9815, Se = 0.7810, Sq = 0.9803

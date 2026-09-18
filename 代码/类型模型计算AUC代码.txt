@@ -1,0 +1,620 @@
+import pandas as pd
+import numpy as np
+import torch
+import torch.nn as nn
+from torch.autograd import Function
+import torch.optim as optim
+from torch.utils.data import DataLoader, TensorDataset
+from torch.optim.lr_scheduler import CosineAnnealingLR
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, f1_score, precision_recall_fscore_support, roc_auc_score, confusion_matrix
+from sklearn.preprocessing import StandardScaler
+from imblearn.over_sampling import SMOTE
+import joblib
+import os
+import shutil
+import torch.nn.functional as F
+
+# 设置随机种子
+torch.manual_seed(42)
+np.random.seed(42)
+
+# 检查设备
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print(f"Using device: {device}")
+
+# 加载数据集 8
+dataset8 = pd.read_csv('diabetes_dataset00.csv')
+
+# 特征定义
+type_features = [
+    'Age', 'Blood Glucose Levels', 'Blood Pressure', 'Weight Gain During Pregnancy', 'BMI',
+    'Digestive Enzyme Levels', 'Waist Circumference', 'Insulin Levels', 'Cholesterol Levels',
+    'Pulmonary Function'
+]
+
+# 全局类型特征统计（与之前代码一致）
+global_type_feature_stats = {
+    'Age': {'mean': 30.0, 'std': 10.0},
+    'Blood Glucose Levels': {'mean': 140.0, 'std': 30.0},
+    'Blood Pressure': {'mean': 120.0, 'std': 20.0},
+    'Weight Gain During Pregnancy': {'mean': 12.0, 'std': 5.0},
+    'BMI': {'mean': 25.0, 'std': 5.0},
+    'Digestive Enzyme Levels': {'mean': 100.0, 'std': 20.0},
+    'Waist Circumference': {'mean': 90.0, 'std': 15.0},
+    'Insulin Levels': {'mean': 10.0, 'std': 5.0},
+    'Cholesterol Levels': {'mean': 200.0, 'std': 40.0},
+    'Pulmonary Function': {'mean': 80.0, 'std': 10.0}
+}
+
+# 类型数据集预处理函数
+def preprocess_type_dataset(df, selected_features, label_col, global_stats, training=True):
+    df = df.copy()
+    print(f"数据集 8 列名：{df.columns.tolist()}")  # 调试：打印列名
+    
+    feature_data = pd.DataFrame(index=df.index)
+    
+    # 处理数值特征
+    for feature in selected_features:
+        if feature in df.columns:
+            col = pd.to_numeric(df[feature], errors='coerce').astype(np.float32)
+        else:
+            print(f"警告：数据集 8 缺少特征 '{feature}'，使用全局统计填充")
+            mean = global_stats[feature]['mean']
+            std = global_stats[feature]['std']
+            col = np.random.normal(mean, std, size=len(df)).astype(np.float32)
+        feature_data[feature] = col
+    
+    # 确保特征顺序
+    features = feature_data[selected_features]
+    
+    # 标签处理
+    if label_col in df.columns:
+        # 打印 Target 列的唯一值以调试
+        print(f"数据集 8 - 标签列：{label_col}，原始唯一值：{df[label_col].unique()}")
+        
+        # 糖尿病类型标签（13 种）
+        type_labels = df[label_col].copy()
+        
+        # 定义 13 种糖尿病类型的映射（支持字符串和数值）
+        type_mapping = {
+            # 字符串映射
+            'Cystic Fibrosis-Related Diabetes (CFRD)': 'CFRD',
+            'Gestational Diabetes (GDM)': 'GDM',
+            'LADA': 'LADA',
+            'MODY': 'MODY',
+            'Neonatal Diabetes Mellitus (NDM)': 'NDM',
+            'Prediabetic': 'Prediabetic',
+            'Secondary Diabetes': 'Secondary Diabetes',
+            'Steroid-Induced Diabetes': 'Steroid-Induced Diabetes',
+            'Type 1 Diabetes': 'Type 1 Diabetes',
+            'Type 2 Diabetes': 'Type 2 Diabetes',
+            'Type 3c Diabetes (Pancreatogenic Diabetes)': 'Type 3c Diabetes',
+            'Wolfram Syndrome': 'Wolfram Syndrome',
+            'Wolman Syndrome': 'Wolman Syndrome',
+            # 数值映射（假设 0 到 12 对应 13 种类型）
+            0: 'CFRD',
+            1: 'GDM',
+            2: 'LADA',
+            3: 'MODY',
+            4: 'NDM',
+            5: 'Prediabetic',
+            6: 'Secondary Diabetes',
+            7: 'Steroid-Induced Diabetes',
+            8: 'Type 1 Diabetes',
+            9: 'Type 2 Diabetes',
+            10: 'Type 3c Diabetes',
+            11: 'Wolfram Syndrome',
+            12: 'Wolman Syndrome'
+        }
+        
+        # 将所有值转换为字符串（避免混合类型）
+        type_labels = type_labels.astype(str)
+        
+        # 标准化标签名称
+        type_labels = type_labels.map(type_mapping).fillna('Unknown')
+        
+        # 确保所有标签都是字符串
+        unique_labels = sorted(type_labels.unique())
+        type_to_idx = {label: idx for idx, label in enumerate(unique_labels)}
+        
+        # 转换为数值标签
+        diabetes_type_labels = type_labels.map(type_to_idx).astype(int)
+        
+        # 治疗标签（基于糖尿病类型分组）
+        treatment_mapping = {
+            # 无需特殊治疗
+            'Prediabetic': 'No Special Treatment',
+            # 胰岛素依赖
+            'Type 1 Diabetes': 'Insulin-Dependent',
+            'LADA': 'Insulin-Dependent',
+            'CFRD': 'Insulin-Dependent',
+            'NDM': 'Insulin-Dependent',
+            'Wolfram Syndrome': 'Insulin-Dependent',
+            'Wolman Syndrome': 'Insulin-Dependent',
+            # 口服药物为主
+            'Type 2 Diabetes': 'Oral Medications',
+            'MODY': 'Oral Medications',
+            'Secondary Diabetes': 'Oral Medications',
+            'Steroid-Induced Diabetes': 'Oral Medications',
+            'Type 3c Diabetes': 'Oral Medications',
+            # 孕期管理
+            'GDM': 'Gestational Management',
+            # 未映射的标签
+            'Unknown': 'Unknown Treatment'
+        }
+        
+        treatment_labels = type_labels.map(treatment_mapping)
+        unique_treatment_labels = sorted(treatment_labels.unique())
+        treatment_to_idx = {label: idx for idx, label in enumerate(unique_treatment_labels)}
+        
+        # 转换为数值标签
+        treatment_labels = treatment_labels.map(treatment_to_idx).astype(int)
+        
+        print(f"数据集 8 - 标准化后的类型标签唯一值：{type_labels.unique()}")
+        print(f"糖尿病类型标签映射：{type_to_idx}")
+        print(f"治疗标签映射：{treatment_to_idx}")
+        
+        if len(np.unique(diabetes_type_labels)) <= 1:
+            print(f"警告：数据集 8 只有 {len(np.unique(diabetes_type_labels))} 个类别（糖尿病类型）。唯一标签：{unique_labels}")
+            return None, None, None, None, None
+        
+        if len(np.unique(treatment_labels)) <= 1:
+            print(f"警告：数据集 8 只有 {len(np.unique(treatment_labels))} 个类别（治疗类型）。唯一标签：{unique_treatment_labels}")
+            return None, None, None, None, None
+    else:
+        print(f"错误：数据集 8 未找到标签列 {label_col}")
+        return None, None, None, None, None
+    
+    return features, diabetes_type_labels, type_to_idx, treatment_labels, treatment_to_idx
+
+# 预处理类型数据集
+features, diabetes_type_labels, type_to_idx, treatment_labels, treatment_to_idx = preprocess_type_dataset(
+    dataset8,
+    type_features,
+    'Target',
+    global_type_feature_stats,
+    training=True
+)
+
+if features is not None and diabetes_type_labels is not None and treatment_labels is not None:
+    # 保存特征顺序
+    feature_order = features.columns.tolist()
+    print(f"类型数据集特征顺序：{feature_order}")
+    
+    # SMOTE 过采样（对 diabetes_type_labels 进行过采样，然后映射 treatment_labels）
+    smote = SMOTE(random_state=42)
+    features_resampled, type_labels_resampled = smote.fit_resample(features, diabetes_type_labels)
+    treatment_labels_resampled = pd.Series([treatment_labels.iloc[np.where(diabetes_type_labels == t)[0][0]] for t in type_labels_resampled], index=type_labels_resampled.index)
+    
+    # 标准化
+    scaler = StandardScaler()
+    features_resampled = pd.DataFrame(
+        scaler.fit_transform(features_resampled),
+        columns=feature_order
+    )
+    
+    # 保存完整的 scaler 信息
+    scaler_info = {
+        'scaler': scaler,
+        'feature_order': feature_order,
+        'numeric_features': type_features,
+        'model_type': 'diabetes_type'
+    }
+    
+    scaler_path = "type_scaler.pkl"
+    joblib.dump(scaler_info, scaler_path)
+    print(f"保存类型数据集标准化器，特征顺序：{feature_order}，路径：{scaler_path}")
+    
+    # 转换为 Tensor
+    features_tensor = torch.tensor(features_resampled.values, dtype=torch.float32).to(device)
+    type_labels_tensor = torch.tensor(type_labels_resampled.values, dtype=torch.long).to(device)
+    treatment_labels_tensor = torch.tensor(treatment_labels_resampled.values, dtype=torch.long).to(device)
+else:
+    print("错误：类型数据集预处理失败，跳过后续步骤")
+    features_tensor = None
+    type_labels_tensor = None
+    treatment_labels_tensor = None
+
+# 梯度反转层
+class GradientReversal(Function):
+    """
+    梯度反转层（Gradient Reversal Layer）
+    在前向传播时保持输入不变，反向传播时反转梯度方向
+    """
+    @staticmethod
+    def forward(ctx, x, alpha):
+        ctx.alpha = alpha
+        return x.view_as(x)
+
+    @staticmethod
+    def backward(ctx, grad_output):
+        output = grad_output.neg() * ctx.alpha
+        return output, None
+
+# 将GRL注册为可调用的函数
+gradient_reversal = GradientReversal.apply
+
+# 特征重要性前10（均为数值特征）
+selected_features = type_features
+
+# 数值特征（与 selected_features 相同）
+numeric_features = selected_features
+
+# 全局特征统计
+global_feature_stats = global_type_feature_stats
+
+# 构造伪域标签（基于 Blood Glucose Levels 分层）
+blood_glucose_idx = selected_features.index('Blood Glucose Levels')
+blood_glucose = features_resampled.iloc[:, blood_glucose_idx].values
+domain_labels = np.zeros(len(blood_glucose), dtype=int)
+domain_labels[(blood_glucose >= 140.0) & (blood_glucose <= 200.0)] = 1
+domain_labels[blood_glucose > 200.0] = 2
+domain_labels_tensor = torch.tensor(domain_labels, dtype=torch.long).to(device)
+
+# 数据集划分
+train_idx, val_idx = train_test_split(np.arange(len(features_resampled)), test_size=0.2, random_state=42, stratify=type_labels_resampled)
+train_dataset = TensorDataset(features_tensor[train_idx], type_labels_tensor[train_idx], treatment_labels_tensor[train_idx], domain_labels_tensor[train_idx])
+val_dataset = TensorDataset(features_tensor[val_idx], type_labels_tensor[val_idx], treatment_labels_tensor[val_idx], domain_labels_tensor[val_idx])
+train_loader = DataLoader(train_dataset, batch_size=8, shuffle=True)
+val_loader = DataLoader(val_dataset, batch_size=8, shuffle=False)
+
+# 模型定义
+class EnhancedDiabetesTypeModel(nn.Module):
+    def __init__(self, input_dim, hidden_dim, num_types, num_treatments, num_domains=3):
+        super(EnhancedDiabetesTypeModel, self).__init__()
+        self.shared_layer = nn.Sequential(
+            nn.Linear(input_dim, hidden_dim * 4),
+            nn.BatchNorm1d(hidden_dim * 4),
+            nn.ReLU(),
+            nn.Dropout(0.4),
+            nn.Linear(hidden_dim * 4, hidden_dim * 2),
+            nn.BatchNorm1d(hidden_dim * 2),
+            nn.ReLU(),
+            nn.Dropout(0.4),
+            nn.Linear(hidden_dim * 2, hidden_dim),
+            nn.BatchNorm1d(hidden_dim),
+            nn.ReLU(),
+            nn.Dropout(0.3)
+        )
+        self.attention = nn.Sequential(
+            nn.Linear(hidden_dim, hidden_dim // 2),
+            nn.Tanh(),
+            nn.Linear(hidden_dim // 2, hidden_dim),
+            nn.Softmax(dim=1)
+        )
+        self.type_head = nn.Sequential(
+            nn.Linear(hidden_dim, hidden_dim // 2),
+            nn.BatchNorm1d(hidden_dim // 2),
+            nn.ReLU(),
+            nn.Dropout(0.3),
+            nn.Linear(hidden_dim // 2, hidden_dim // 4),
+            nn.BatchNorm1d(hidden_dim // 4),
+            nn.ReLU(),
+            nn.Dropout(0.2),
+            nn.Linear(hidden_dim // 4, num_types)
+        )
+        self.treatment_head = nn.Sequential(
+            nn.Linear(hidden_dim, hidden_dim // 2),
+            nn.BatchNorm1d(hidden_dim // 2),
+            nn.ReLU(),
+            nn.Dropout(0.3),
+            nn.Linear(hidden_dim // 2, num_treatments)
+        )
+        self.domain_classifier = nn.Sequential(
+            nn.Linear(hidden_dim, hidden_dim),
+            nn.ReLU(),
+            nn.Dropout(0.3),
+            nn.Linear(hidden_dim, num_domains)
+        )
+        self._initialize_weights()
+    
+    def _initialize_weights(self):
+        for module in self.modules():
+            if isinstance(module, nn.Linear):
+                nn.init.xavier_uniform_(module.weight)
+                if module.bias is not None:
+                    nn.init.zeros_(module.bias)
+    
+    def forward(self, x, alpha=1.0):
+        shared_features = self.shared_layer(x)
+        attention_weights = self.attention(shared_features)
+        weighted_features = shared_features * attention_weights
+        type_logits = self.type_head(weighted_features)
+        treatment_logits = self.treatment_head(weighted_features)
+        domain_logits = self.domain_classifier(GradientReversal.apply(weighted_features, alpha))
+        return type_logits, treatment_logits, domain_logits
+
+# 初始化模型
+input_dim = len(selected_features)
+hidden_dim = 512
+num_types = len(type_to_idx)
+num_treatments = len(treatment_to_idx)
+model = EnhancedDiabetesTypeModel(input_dim, hidden_dim, num_types, num_treatments, num_domains=3).to(device)
+
+# 损失函数
+type_weights = torch.zeros(num_types, dtype=torch.float32)
+for idx in range(num_types):
+    count = (type_labels_resampled == idx).sum()
+    type_weights[idx] = len(type_labels_resampled) / (num_types * count) if count > 0 else 1.0
+type_criterion = nn.CrossEntropyLoss(weight=type_weights.to(device))
+
+treatment_weights = torch.zeros(num_treatments, dtype=torch.float32)
+for idx in range(num_treatments):
+    count = (treatment_labels_resampled == idx).sum()
+    treatment_weights[idx] = len(treatment_labels_resampled) / (num_treatments * count) if count > 0 else 1.0
+treatment_criterion = nn.CrossEntropyLoss(weight=treatment_weights.to(device))
+
+domain_criterion = nn.CrossEntropyLoss()
+
+# 优化器与调度器
+optimizer = optim.AdamW(model.parameters(), lr=0.001, weight_decay=1e-4)
+
+class WarmUpScheduler:
+    def __init__(self, optimizer, warmup_epochs, base_lr):
+        self.optimizer = optimizer
+        self.warmup_epochs = warmup_epochs
+        self.base_lr = base_lr
+        self.current_epoch = 0
+    
+    def step(self):
+        self.current_epoch += 1
+        if self.current_epoch <= self.warmup_epochs:
+            lr = self.base_lr * (self.current_epoch / self.warmup_epochs)
+            for param_group in self.optimizer.param_groups:
+                param_group['lr'] = lr
+
+warmup_scheduler = WarmUpScheduler(optimizer, warmup_epochs=5, base_lr=0.001)
+scheduler = CosineAnnealingLR(optimizer, T_max=20)
+
+# 训练和验证（详细版）
+best_val_loss = float('inf')
+patience = 5
+counter = 0
+best_model_path = "best_dataset8_diabetes_type_model.pth"
+final_model_path = "dataset8_diabetes_type_model.pth"
+
+history = {'train_loss': [], 'val_loss': [], 'type_acc': [], 'treat_acc': [], 'domain_acc': [], 'type_f1': [], 'treat_f1': []}
+type_metrics_history = []
+treat_consistency_history = []
+
+for epoch in range(50):
+    model.train()
+    total_train_loss = 0.0
+    train_type_preds = []
+    train_type_targets = []
+    train_treat_preds = []
+    train_treat_targets = []
+    train_domain_preds = []
+    train_domain_targets = []
+    
+    for batch_features, batch_type_labels, batch_treat_labels, batch_domain_labels in train_loader:
+        batch_features = batch_features.to(device)
+        batch_type_labels = batch_type_labels.to(device)
+        batch_treat_labels = batch_treat_labels.to(device)
+        batch_domain_labels = batch_domain_labels.to(device)
+        
+        optimizer.zero_grad()
+        
+        # 前向传播
+        alpha = 2.0 / (1.0 + np.exp(-10 * epoch / 50)) - 1  # 动态调整 alpha
+        type_logits, treatment_logits, domain_logits = model(batch_features, alpha)
+        
+        # 计算损失
+        loss_type = type_criterion(type_logits, batch_type_labels)
+        loss_treatment = treatment_criterion(treatment_logits, batch_treat_labels)
+        loss_domain = domain_criterion(domain_logits, batch_domain_labels)
+        
+        # 总损失
+        loss = loss_type + 0.5 * loss_treatment + 0.1 * loss_domain
+        
+        # 反向传播
+        loss.backward()
+        torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
+        optimizer.step()
+        
+        total_train_loss += loss.item()
+        
+        # 收集预测和真实标签
+        train_type_preds.extend(torch.argmax(type_logits, dim=1).cpu().numpy())
+        train_type_targets.extend(batch_type_labels.cpu().numpy())
+        train_treat_preds.extend(torch.argmax(treatment_logits, dim=1).cpu().numpy())
+        train_treat_targets.extend(batch_treat_labels.cpu().numpy())
+        train_domain_preds.extend(torch.argmax(domain_logits, dim=1).cpu().numpy())
+        train_domain_targets.extend(batch_domain_labels.cpu().numpy())
+    
+    avg_train_loss = total_train_loss / len(train_loader)
+    train_type_acc = accuracy_score(train_type_targets, train_type_preds)
+    train_treat_acc = accuracy_score(train_treat_targets, train_treat_preds)
+    train_domain_acc = accuracy_score(train_domain_targets, train_domain_preds)
+    
+    # 验证阶段
+    model.eval()
+    total_val_loss = 0.0
+    val_type_preds = []
+    val_type_targets = []
+    val_treat_preds = []
+    val_treat_targets = []
+    val_domain_preds = []
+    val_domain_targets = []
+    
+    # 用于一致性评估：多次预测相同输入
+    val_treat_preds_multiple = []  # 存储多次预测结果
+    num_runs = 5  # 每次输入预测 5 次
+    
+    # 新增：收集类型概率用于AUC计算
+    val_type_probs = []
+    
+    with torch.no_grad():
+        for batch_features, batch_type_labels, batch_treat_labels, batch_domain_labels in val_loader:
+            batch_features = batch_features.to(device)
+            batch_type_labels = batch_type_labels.to(device)
+            batch_treat_labels = batch_treat_labels.to(device)
+            batch_domain_labels = batch_domain_labels.to(device)
+            
+            # 单次预测用于常规指标
+            type_logits, treatment_logits, domain_logits = model(batch_features, alpha)
+            
+            loss_type = type_criterion(type_logits, batch_type_labels)
+            loss_treatment = treatment_criterion(treatment_logits, batch_treat_labels)
+            loss_domain = domain_criterion(domain_logits, batch_domain_labels)
+            loss = loss_type + 0.5 * loss_treatment + 0.1 * loss_domain
+            
+            total_val_loss += loss.item()
+            
+            val_type_preds.extend(torch.argmax(type_logits, dim=1).cpu().numpy())
+            val_type_targets.extend(batch_type_labels.cpu().numpy())
+            val_treat_preds.extend(torch.argmax(treatment_logits, dim=1).cpu().numpy())
+            val_treat_targets.extend(batch_treat_labels.cpu().numpy())
+            val_domain_preds.extend(torch.argmax(domain_logits, dim=1).cpu().numpy())
+            val_domain_targets.extend(batch_domain_labels.cpu().numpy())
+            
+            # 新增：收集概率
+            type_probs = F.softmax(type_logits, dim=1).cpu().numpy()
+            val_type_probs.extend(type_probs)
+            
+            # 一致性评估：多次预测
+            batch_treat_preds = []
+            for _ in range(num_runs):
+                _, treatment_logits, _ = model(batch_features, alpha)
+                batch_treat_preds.append(torch.argmax(treatment_logits, dim=1).cpu().numpy())
+            val_treat_preds_multiple.append(np.stack(batch_treat_preds, axis=0))
+    
+    avg_val_loss = total_val_loss / len(val_loader)
+    val_type_acc = accuracy_score(val_type_targets, val_type_preds)
+    val_treat_acc = accuracy_score(val_treat_targets, val_treat_preds)
+    val_domain_acc = accuracy_score(val_domain_targets, val_domain_preds)
+    val_type_f1 = f1_score(val_type_targets, val_type_preds, average='weighted')
+    val_treat_f1 = f1_score(val_treat_targets, val_treat_preds, average='weighted')
+    
+    # 计算各糖尿病类型的精确率、召回率和 F1 分数
+    precision, recall, f1, _ = precision_recall_fscore_support(val_type_targets, val_type_preds, average=None, labels=list(range(num_types)))
+    
+    # 新增：计算AUC、Se (Sensitivity=Recall)、Sq (Specificity)
+    val_type_probs = np.array(val_type_probs)
+    auc_per_class = roc_auc_score(val_type_targets, val_type_probs, multi_class='ovr', average=None, labels=list(range(num_types)))
+    
+    cm = confusion_matrix(val_type_targets, val_type_preds, labels=list(range(num_types)))
+    total_samples = len(val_type_targets)
+    specificity = []
+    sensitivity = recall  # Se = Recall
+    for i in range(num_types):
+        TP = cm[i, i]
+        FN = np.sum(cm[:, i]) - TP
+        FP = np.sum(cm[i, :]) - TP
+        TN = total_samples - TP - FN - FP
+        Sp = TN / (TN + FP) if (TN + FP) > 0 else 0.0
+        specificity.append(Sp)
+    
+    type_metrics = {}
+    idx_to_type = {idx: type_name for type_name, idx in type_to_idx.items()}
+    for idx in range(num_types):
+        type_name = idx_to_type[idx]
+        type_metrics[type_name] = {
+            'precision': precision[idx],
+            'recall': recall[idx],
+            'f1': f1[idx],
+            'auc': auc_per_class[idx],
+            'sensitivity': sensitivity[idx],  # Se
+            'specificity': specificity[idx]   # Sq
+        }
+    type_metrics_history.append(type_metrics)
+    
+    # 计算治疗建议一致性
+    val_treat_preds_multiple = np.concatenate(val_treat_preds_multiple, axis=1)  # 形状 (num_runs, num_samples)
+    consistency_scores = []
+    for sample_idx in range(val_treat_preds_multiple.shape[1]):
+        sample_preds = val_treat_preds_multiple[:, sample_idx]
+        most_common_pred = np.bincount(sample_preds).argmax()
+        consistency = np.mean(sample_preds == most_common_pred)
+        consistency_scores.append(consistency)
+    avg_consistency = np.mean(consistency_scores)
+    treat_consistency_history.append(avg_consistency)
+    
+    # 记录历史
+    history['train_loss'].append(avg_train_loss)
+    history['val_loss'].append(avg_val_loss)
+    history['type_acc'].append(val_type_acc)
+    history['treat_acc'].append(val_treat_acc)
+    history['domain_acc'].append(val_domain_acc)
+    history['type_f1'].append(val_type_f1)
+    history['treat_f1'].append(val_treat_f1)
+    
+    # 打印日志
+    print(f"\nEpoch {epoch+1}/50")
+    print(f"Train Loss: {avg_train_loss:.4f}, Val Loss: {avg_val_loss:.4f}")
+    print(f"Type Acc: {val_type_acc:.4f}, Treat Acc: {val_treat_acc:.4f}, Domain Acc: {val_domain_acc:.4f}")
+    print(f"Type F1: {val_type_f1:.4f}, Treat F1: {val_treat_f1:.4f}")
+    print("\nPer Diabetes Type Metrics:")
+    for type_name, metrics in type_metrics.items():
+        print(f"{type_name}: Precision: {metrics['precision']:.4f}, Recall: {metrics['recall']:.4f}, F1: {metrics['f1']:.4f}, AUC: {metrics['auc']:.4f}, Se: {metrics['sensitivity']:.4f}, Sq: {metrics['specificity']:.4f}")
+    print(f"\nTreatment Consistency: {avg_consistency:.4f}")
+    
+    # 学习率调整
+    warmup_scheduler.step()
+    if epoch >= 5:
+        scheduler.step()
+    
+    # 早停机制
+    if avg_val_loss < best_val_loss:
+        best_val_loss = avg_val_loss
+        counter = 0
+        torch.save(model.state_dict(), best_model_path)
+        print(f"New best model (Val Loss: {best_val_loss:.4f})")
+    else:
+        counter += 1
+        if counter >= patience:
+            print(f"Early stopping at epoch {epoch+1}")
+            break
+
+# 保存最终模型
+shutil.copy(best_model_path, final_model_path)
+if os.path.exists(best_model_path):
+    os.remove(best_model_path)
+print(f"Model saved to: {final_model_path}")
+
+# 保存指标到 CSV
+metrics_data = {
+    'Epoch': list(range(1, len(history['train_loss']) + 1)),
+    'Train Loss': history['train_loss'],
+    'Val Loss': history['val_loss'],
+    'Type Acc': history['type_acc'],
+    'Treat Acc': history['treat_acc'],
+    'Domain Acc': history['domain_acc'],
+    'Type F1': history['type_f1'],
+    'Treat F1': history['treat_f1'],
+    'Treatment Consistency': treat_consistency_history
+}
+# 添加各类型的指标
+for type_name in type_to_idx.keys():
+    metrics_data[f'{type_name}_Precision'] = [type_metrics_history[i][type_name]['precision'] for i in range(len(type_metrics_history))]
+    metrics_data[f'{type_name}_Recall'] = [type_metrics_history[i][type_name]['recall'] for i in range(len(type_metrics_history))]
+    metrics_data[f'{type_name}_F1'] = [type_metrics_history[i][type_name]['f1'] for i in range(len(type_metrics_history))]
+    metrics_data[f'{type_name}_AUC'] = [type_metrics_history[i][type_name]['auc'] for i in range(len(type_metrics_history))]
+    metrics_data[f'{type_name}_Sensitivity'] = [type_metrics_history[i][type_name]['sensitivity'] for i in range(len(type_metrics_history))]
+    metrics_data[f'{type_name}_Specificity'] = [type_metrics_history[i][type_name]['specificity'] for i in range(len(type_metrics_history))]
+
+metrics_df = pd.DataFrame(metrics_data)
+metrics_csv_path = "dataset8_metrics.csv"
+metrics_df.to_csv(metrics_csv_path, index=False, float_format='%.4f')
+print(f"Metrics saved to: {metrics_csv_path}")
+
+# 计算平均指标（macro-average over all diabetes types per epoch）
+auc_cols = [col for col in metrics_df.columns if col.endswith('_AUC')]
+se_cols = [col for col in metrics_df.columns if col.endswith('_Sensitivity')]
+sq_cols = [col for col in metrics_df.columns if col.endswith('_Specificity')]
+
+avg_auc = metrics_df[auc_cols].mean(axis=1).tolist()  # List of avg AUC per epoch
+avg_se = metrics_df[se_cols].mean(axis=1).tolist()    # List of avg Se per epoch
+avg_sq = metrics_df[sq_cols].mean(axis=1).tolist()    # List of avg Sq per epoch
+
+# 输出
+print("\n=== Average Metrics Across All Diabetes Types (Per Epoch) ===")
+for epoch, (auc, se, sq) in enumerate(zip(avg_auc, avg_se, avg_sq), 1):
+    print(f"Epoch {epoch}: Avg AUC = {auc:.4f}, Avg Se = {se:.4f}, Avg Sq = {sq:.4f}")
+
+# 最终平均（over all epochs）
+final_avg_auc = np.mean(avg_auc)
+final_avg_se = np.mean(avg_se)
+final_avg_sq = np.mean(avg_sq)
+print(f"\nOverall Average (All Epochs): AUC = {final_avg_auc:.4f}, Se = {final_avg_se:.4f}, Sq = {final_avg_sq:.4f}")

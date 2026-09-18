@@ -1,0 +1,233 @@
+Using device: cpu
+数据集 1 列名：['PatientID', 'Age', 'Gender', 'Ethnicity', 'SocioeconomicStatus', 'EducationLevel', 'BMI', 'Smoking', 'AlcoholConsumption', 'PhysicalActivity', 'DietQuality', 'SleepQuality', 'FamilyHistoryDiabetes', 'GestationalDiabetes', 'PolycysticOvarySyndrome', 'PreviousPreDiabetes', 'Hypertension', 'SystolicBP', 'DiastolicBP', 'FastingBloodSugar', 'HbA1c', 'SerumCreatinine', 'BUNLevels', 'CholesterolTotal', 'CholesterolLDL', 'CholesterolHDL', 'CholesterolTriglycerides', 'AntihypertensiveMedications', 'Statins', 'AntidiabeticMedications', 'FrequentUrination', 'ExcessiveThirst', 'UnexplainedWeightLoss', 'FatigueLevels', 'BlurredVision', 'SlowHealingSores', 'TinglingHandsFeet', 'QualityOfLifeScore', 'HeavyMetalsExposure', 'OccupationalExposureChemicals', 'WaterQuality', 'MedicalCheckupsFrequency', 'MedicationAdherence', 'HealthLiteracy', 'Diagnosis', 'DoctorInCharge']
+数据集 2 列名：['Patient_ID', 'Age', 'Gender', 'Country', 'Blood_Glucose_Level', 'Insulin_Level', 'Diagnosis']
+警告：数据集无明确血压信息，使用全局均值 120 估算 MAP
+数据集 3 列名：['Pregnancies', 'Glucose', 'BloodPressure', 'SkinThickness', 'Insulin', 'BMI', 'DiabetesPedigreeFunction', 'Age', 'Diagnosis']
+数据集 1 - 标签列：Diagnosis，唯一值：[1 0]
+数据集 1 列名：['PatientID', 'Age', 'Gender', 'Ethnicity', 'SocioeconomicStatus', 'EducationLevel', 'BMI', 'Smoking', 'AlcoholConsumption', 'PhysicalActivity', 'DietQuality', 'SleepQuality', 'FamilyHistoryDiabetes', 'GestationalDiabetes', 'PolycysticOvarySyndrome', 'PreviousPreDiabetes', 'Hypertension', 'SystolicBP', 'DiastolicBP', 'FastingBloodSugar', 'HbA1c', 'SerumCreatinine', 'BUNLevels', 'CholesterolTotal', 'CholesterolLDL', 'CholesterolHDL', 'CholesterolTriglycerides', 'AntihypertensiveMedications', 'Statins', 'AntidiabeticMedications', 'FrequentUrination', 'ExcessiveThirst', 'UnexplainedWeightLoss', 'FatigueLevels', 'BlurredVision', 'SlowHealingSores', 'TinglingHandsFeet', 'QualityOfLifeScore', 'HeavyMetalsExposure', 'OccupationalExposureChemicals', 'WaterQuality', 'MedicalCheckupsFrequency', 'MedicationAdherence', 'HealthLiteracy', 'Diagnosis', 'DoctorInCharge']
+保存单任务标准化器 任务 0，路径：C:/Users/莫冰/Desktop/test/single_task_scaler_0.pkl
+数据集 2 - 标签列：Diagnosis，唯一值：['Positive' 'Negative']
+数据集 2 列名：['Patient_ID', 'Age', 'Gender', 'Country', 'Blood_Glucose_Level', 'Insulin_Level', 'Diagnosis']
+
+Warning (from warnings module):
+  File "D:\Doc\lib\site-packages\sklearn\utils\deprecation.py", line 151
+    warnings.warn(
+FutureWarning: 'force_all_finite' was renamed to 'ensure_all_finite' in 1.6 and will be removed in 1.8.
+
+Warning (from warnings module):
+  File "D:\Doc\lib\site-packages\sklearn\base.py", line 484
+    warnings.warn(
+FutureWarning: `BaseEstimator._check_n_features` is deprecated in 1.6 and will be removed in 1.7. Use `sklearn.utils.validation._check_n_features` instead.
+
+Warning (from warnings module):
+  File "D:\Doc\lib\site-packages\sklearn\base.py", line 493
+    warnings.warn(
+FutureWarning: `BaseEstimator._check_feature_names` is deprecated in 1.6 and will be removed in 1.7. Use `sklearn.utils.validation._check_feature_names` instead.
+保存单任务标准化器 任务 1，路径：C:/Users/莫冰/Desktop/test/single_task_scaler_1.pkl
+数据集 3 - 标签列：Diagnosis，唯一值：[0 1]
+数据集 3 列名：['Pregnancies', 'Glucose', 'BloodPressure', 'SkinThickness', 'Insulin', 'BMI', 'DiabetesPedigreeFunction', 'Age', 'Diagnosis']
+
+Warning (from warnings module):
+  File "D:\Doc\lib\site-packages\sklearn\utils\deprecation.py", line 151
+    warnings.warn(
+FutureWarning: 'force_all_finite' was renamed to 'ensure_all_finite' in 1.6 and will be removed in 1.8.
+
+Warning (from warnings module):
+  File "D:\Doc\lib\site-packages\sklearn\base.py", line 484
+    warnings.warn(
+FutureWarning: `BaseEstimator._check_n_features` is deprecated in 1.6 and will be removed in 1.7. Use `sklearn.utils.validation._check_n_features` instead.
+
+Warning (from warnings module):
+  File "D:\Doc\lib\site-packages\sklearn\base.py", line 493
+    warnings.warn(
+FutureWarning: `BaseEstimator._check_feature_names` is deprecated in 1.6 and will be removed in 1.7. Use `sklearn.utils.validation._check_feature_names` instead.
+保存单任务标准化器 任务 2，路径：C:/Users/莫冰/Desktop/test/single_task_scaler_2.pkl
+单任务 0 标签分布: {0: 1127, 1: 752}
+单任务 1 标签分布: {0: 4957, 1: 4957}
+单任务 2 标签分布: {0: 694, 1: 694}
+
+--- 单任务 0 训练开始 ---
+Epoch 1/50 - Task 0: Train Loss: 0.7673, Val Loss: 0.4919
+  Precision: 0.8122, Recall: 0.8112, F1: 0.8072
+  {'AUC': 0.8665191740412979, 'AUC_95CI': '0.867 (0.823-0.901)', 'Sensitivity (Se)': 0.6733333333333333, 'Specificity (Sp)': 0.9026548672566371}
+Epoch 2/50 - Task 0: Train Loss: 0.6143, Val Loss: 0.4497
+  Precision: 0.8399, Recall: 0.8404, F1: 0.8389
+  {'AUC': 0.8763126843657817, 'AUC_95CI': '0.876 (0.839-0.914)', 'Sensitivity (Se)': 0.7533333333333333, 'Specificity (Sp)': 0.8982300884955752}
+Epoch 3/50 - Task 0: Train Loss: 0.5246, Val Loss: 0.4339
+  Precision: 0.8624, Recall: 0.8617, F1: 0.8599
+  {'AUC': 0.8836578171091446, 'AUC_95CI': '0.884 (0.840-0.921)', 'Sensitivity (Se)': 0.7666666666666667, 'Specificity (Sp)': 0.9247787610619469}
+Epoch 4/50 - Task 0: Train Loss: 0.5068, Val Loss: 0.4253
+  Precision: 0.8675, Recall: 0.8644, F1: 0.8618
+  {'AUC': 0.8903539823008849, 'AUC_95CI': '0.890 (0.851-0.926)', 'Sensitivity (Se)': 0.7466666666666667, 'Specificity (Sp)': 0.9424778761061947}
+Epoch 5/50 - Task 0: Train Loss: 0.4984, Val Loss: 0.4195
+  Precision: 0.8560, Recall: 0.8564, F1: 0.8552
+  {'AUC': 0.8882005899705016, 'AUC_95CI': '0.888 (0.851-0.925)', 'Sensitivity (Se)': 0.78, 'Specificity (Sp)': 0.9070796460176991}
+Epoch 6/50 - Task 0: Train Loss: 0.4775, Val Loss: 0.4138
+  Precision: 0.8612, Recall: 0.8617, F1: 0.8608
+  {'AUC': 0.8876106194690266, 'AUC_95CI': '0.888 (0.848-0.922)', 'Sensitivity (Se)': 0.7933333333333333, 'Specificity (Sp)': 0.9070796460176991}
+Epoch 7/50 - Task 0: Train Loss: 0.4836, Val Loss: 0.4101
+  Precision: 0.8560, Recall: 0.8564, F1: 0.8552
+  {'AUC': 0.8896755162241888, 'AUC_95CI': '0.890 (0.852-0.926)', 'Sensitivity (Se)': 0.78, 'Specificity (Sp)': 0.9070796460176991}
+Epoch 8/50 - Task 0: Train Loss: 0.4846, Val Loss: 0.4039
+  Precision: 0.8558, Recall: 0.8564, F1: 0.8555
+  {'AUC': 0.893598820058997, 'AUC_95CI': '0.894 (0.854-0.927)', 'Sensitivity (Se)': 0.7866666666666666, 'Specificity (Sp)': 0.9026548672566371}
+Epoch 9/50 - Task 0: Train Loss: 0.4589, Val Loss: 0.4015
+  Precision: 0.8611, Recall: 0.8617, F1: 0.8610
+  {'AUC': 0.8930383480825959, 'AUC_95CI': '0.893 (0.857-0.930)', 'Sensitivity (Se)': 0.8, 'Specificity (Sp)': 0.9026548672566371}
+Epoch 10/50 - Task 0: Train Loss: 0.4726, Val Loss: 0.4002
+  Precision: 0.8754, Recall: 0.8750, F1: 0.8737
+  {'AUC': 0.8958112094395281, 'AUC_95CI': '0.896 (0.856-0.931)', 'Sensitivity (Se)': 0.7933333333333333, 'Specificity (Sp)': 0.9292035398230089}
+Epoch 11/50 - Task 0: Train Loss: 0.4618, Val Loss: 0.3966
+  Precision: 0.8694, Recall: 0.8697, F1: 0.8687
+  {'AUC': 0.896519174041298, 'AUC_95CI': '0.897 (0.857-0.931)', 'Sensitivity (Se)': 0.8, 'Specificity (Sp)': 0.915929203539823}
+Epoch 12/50 - Task 0: Train Loss: 0.4518, Val Loss: 0.3991
+  Precision: 0.8639, Recall: 0.8644, F1: 0.8636
+  {'AUC': 0.8956047197640118, 'AUC_95CI': '0.896 (0.860-0.933)', 'Sensitivity (Se)': 0.8, 'Specificity (Sp)': 0.9070796460176991}
+Epoch 13/50 - Task 0: Train Loss: 0.4684, Val Loss: 0.3963
+  Precision: 0.8754, Recall: 0.8750, F1: 0.8737
+  {'AUC': 0.8965781710914453, 'AUC_95CI': '0.897 (0.860-0.929)', 'Sensitivity (Se)': 0.7933333333333333, 'Specificity (Sp)': 0.9292035398230089}
+Epoch 14/50 - Task 0: Train Loss: 0.4265, Val Loss: 0.3891
+  Precision: 0.8692, Recall: 0.8697, F1: 0.8691
+  {'AUC': 0.8976696165191741, 'AUC_95CI': '0.898 (0.860-0.931)', 'Sensitivity (Se)': 0.8133333333333334, 'Specificity (Sp)': 0.9070796460176991}
+Epoch 15/50 - Task 0: Train Loss: 0.4508, Val Loss: 0.3863
+  Precision: 0.8587, Recall: 0.8590, F1: 0.8588
+  {'AUC': 0.8979056047197641, 'AUC_95CI': '0.898 (0.860-0.931)', 'Sensitivity (Se)': 0.8133333333333334, 'Specificity (Sp)': 0.8893805309734514}
+Epoch 16/50 - Task 0: Train Loss: 0.4489, Val Loss: 0.3836
+  Precision: 0.8834, Recall: 0.8830, F1: 0.8819
+  {'AUC': 0.8979646017699116, 'AUC_95CI': '0.898 (0.858-0.930)', 'Sensitivity (Se)': 0.8066666666666666, 'Specificity (Sp)': 0.9336283185840708}
+Epoch 17/50 - Task 0: Train Loss: 0.4367, Val Loss: 0.3789
+  Precision: 0.8774, Recall: 0.8777, F1: 0.8769
+  {'AUC': 0.8987610619469025, 'AUC_95CI': '0.899 (0.866-0.932)', 'Sensitivity (Se)': 0.8133333333333334, 'Specificity (Sp)': 0.9203539823008849}
+Epoch 18/50 - Task 0: Train Loss: 0.4241, Val Loss: 0.3791
+  Precision: 0.8665, Recall: 0.8670, F1: 0.8665
+  {'AUC': 0.8992330383480825, 'AUC_95CI': '0.899 (0.859-0.933)', 'Sensitivity (Se)': 0.8133333333333334, 'Specificity (Sp)': 0.9026548672566371}
+Epoch 19/50 - Task 0: Train Loss: 0.4126, Val Loss: 0.3795
+  Precision: 0.8779, Recall: 0.8777, F1: 0.8765
+  {'AUC': 0.8996460176991151, 'AUC_95CI': '0.900 (0.861-0.934)', 'Sensitivity (Se)': 0.8, 'Specificity (Sp)': 0.9292035398230089}
+Epoch 20/50 - Task 0: Train Loss: 0.4190, Val Loss: 0.3771
+  Precision: 0.8859, Recall: 0.8856, F1: 0.8846
+  {'AUC': 0.8985840707964602, 'AUC_95CI': '0.899 (0.858-0.930)', 'Sensitivity (Se)': 0.8133333333333334, 'Specificity (Sp)': 0.9336283185840708}
+Epoch 21/50 - Task 0: Train Loss: 0.3974, Val Loss: 0.3747
+  Precision: 0.8893, Recall: 0.8883, F1: 0.8871
+  {'AUC': 0.8992035398230088, 'AUC_95CI': '0.899 (0.856-0.933)', 'Sensitivity (Se)': 0.8066666666666666, 'Specificity (Sp)': 0.9424778761061947}
+Epoch 22/50 - Task 0: Train Loss: 0.4189, Val Loss: 0.3747
+  Precision: 0.8773, Recall: 0.8777, F1: 0.8770
+  {'AUC': 0.8993805309734514, 'AUC_95CI': '0.899 (0.863-0.935)', 'Sensitivity (Se)': 0.82, 'Specificity (Sp)': 0.915929203539823}
+Epoch 23/50 - Task 0: Train Loss: 0.4022, Val Loss: 0.3757
+  Precision: 0.8834, Recall: 0.8830, F1: 0.8819
+  {'AUC': 0.9001179941002949, 'AUC_95CI': '0.900 (0.865-0.936)', 'Sensitivity (Se)': 0.8066666666666666, 'Specificity (Sp)': 0.9336283185840708}
+Epoch 24/50 - Task 0: Train Loss: 0.4034, Val Loss: 0.3765
+  Precision: 0.8977, Recall: 0.8963, F1: 0.8950
+  {'AUC': 0.9007669616519174, 'AUC_95CI': '0.901 (0.861-0.934)', 'Sensitivity (Se)': 0.8133333333333334, 'Specificity (Sp)': 0.9513274336283186}
+Epoch 25/50 - Task 0: Train Loss: 0.3987, Val Loss: 0.3754
+  Precision: 0.8953, Recall: 0.8936, F1: 0.8923
+  {'AUC': 0.8993215339233038, 'AUC_95CI': '0.899 (0.862-0.935)', 'Sensitivity (Se)': 0.8066666666666666, 'Specificity (Sp)': 0.9513274336283186}
+Epoch 26/50 - Task 0: Train Loss: 0.3994, Val Loss: 0.3812
+  Precision: 0.8868, Recall: 0.8856, F1: 0.8843
+  {'AUC': 0.8999410029498526, 'AUC_95CI': '0.900 (0.864-0.935)', 'Sensitivity (Se)': 0.8, 'Specificity (Sp)': 0.9424778761061947}
+Epoch 27/50 - Task 0: Train Loss: 0.4125, Val Loss: 0.3733
+  Precision: 0.8929, Recall: 0.8910, F1: 0.8895
+  {'AUC': 0.9004424778761062, 'AUC_95CI': '0.900 (0.858-0.935)', 'Sensitivity (Se)': 0.8, 'Specificity (Sp)': 0.9513274336283186}
+Epoch 28/50 - Task 0: Train Loss: 0.4065, Val Loss: 0.3746
+  Precision: 0.8953, Recall: 0.8936, F1: 0.8923
+  {'AUC': 0.899882005899705, 'AUC_95CI': '0.900 (0.858-0.936)', 'Sensitivity (Se)': 0.8066666666666666, 'Specificity (Sp)': 0.9513274336283186}
+Epoch 29/50 - Task 0: Train Loss: 0.3972, Val Loss: 0.3764
+  Precision: 0.8898, Recall: 0.8883, F1: 0.8869
+  {'AUC': 0.8992330383480827, 'AUC_95CI': '0.899 (0.861-0.933)', 'Sensitivity (Se)': 0.8, 'Specificity (Sp)': 0.9469026548672567}
+Epoch 30/50 - Task 0: Train Loss: 0.3962, Val Loss: 0.3741
+  Precision: 0.8923, Recall: 0.8910, F1: 0.8897
+  {'AUC': 0.8989085545722715, 'AUC_95CI': '0.899 (0.862-0.933)', 'Sensitivity (Se)': 0.8066666666666666, 'Specificity (Sp)': 0.9469026548672567}
+Epoch 31/50 - Task 0: Train Loss: 0.3912, Val Loss: 0.3734
+  Precision: 0.8863, Recall: 0.8856, F1: 0.8845
+  {'AUC': 0.8986430678466077, 'AUC_95CI': '0.899 (0.859-0.931)', 'Sensitivity (Se)': 0.8066666666666666, 'Specificity (Sp)': 0.9380530973451328}
+Epoch 32/50 - Task 0: Train Loss: 0.4297, Val Loss: 0.3752
+  Precision: 0.8859, Recall: 0.8856, F1: 0.8846
+  {'AUC': 0.900014749262537, 'AUC_95CI': '0.900 (0.864-0.936)', 'Sensitivity (Se)': 0.8133333333333334, 'Specificity (Sp)': 0.9336283185840708}
+Early stopping at epoch 32
+单任务 0 模型保存至: C:/Users/莫冰/Desktop/test/single_task_0_model.pth
+单任务 0 结果保存至: C:/Users/莫冰/Desktop/test/single_task_0_metrics.csv
+
+--- 单任务 1 训练开始 ---
+Epoch 1/50 - Task 1: Train Loss: 0.1779, Val Loss: 0.0025
+  Precision: 1.0000, Recall: 1.0000, F1: 1.0000
+  {'AUC': 1.0, 'AUC_95CI': '1.000 (1.000-1.000)', 'Sensitivity (Se)': 1.0, 'Specificity (Sp)': 1.0}
+Epoch 2/50 - Task 1: Train Loss: 0.0084, Val Loss: 0.0007
+  Precision: 1.0000, Recall: 1.0000, F1: 1.0000
+  {'AUC': 1.0, 'AUC_95CI': '1.000 (1.000-1.000)', 'Sensitivity (Se)': 1.0, 'Specificity (Sp)': 1.0}
+Epoch 3/50 - Task 1: Train Loss: 0.0038, Val Loss: 0.0004
+  Precision: 1.0000, Recall: 1.0000, F1: 1.0000
+  {'AUC': 1.0, 'AUC_95CI': '1.000 (1.000-1.000)', 'Sensitivity (Se)': 1.0, 'Specificity (Sp)': 1.0}
+Epoch 4/50 - Task 1: Train Loss: 0.0024, Val Loss: 0.0002
+  Precision: 1.0000, Recall: 1.0000, F1: 1.0000
+  {'AUC': 1.0, 'AUC_95CI': '1.000 (1.000-1.000)', 'Sensitivity (Se)': 1.0, 'Specificity (Sp)': 1.0}
+Epoch 5/50 - Task 1: Train Loss: 0.0022, Val Loss: 0.0002
+  Precision: 1.0000, Recall: 1.0000, F1: 1.0000
+  {'AUC': 1.0, 'AUC_95CI': '1.000 (1.000-1.000)', 'Sensitivity (Se)': 1.0, 'Specificity (Sp)': 1.0}
+Epoch 6/50 - Task 1: Train Loss: 0.0014, Val Loss: 0.0002
+  Precision: 1.0000, Recall: 1.0000, F1: 1.0000
+  {'AUC': 1.0, 'AUC_95CI': '1.000 (1.000-1.000)', 'Sensitivity (Se)': 1.0, 'Specificity (Sp)': 1.0}
+Epoch 7/50 - Task 1: Train Loss: 0.0013, Val Loss: 0.0002
+  Precision: 1.0000, Recall: 1.0000, F1: 1.0000
+  {'AUC': 1.0, 'AUC_95CI': '1.000 (1.000-1.000)', 'Sensitivity (Se)': 1.0, 'Specificity (Sp)': 1.0}
+Epoch 8/50 - Task 1: Train Loss: 0.0012, Val Loss: 0.0002
+  Precision: 1.0000, Recall: 1.0000, F1: 1.0000
+  {'AUC': 1.0, 'AUC_95CI': '1.000 (1.000-1.000)', 'Sensitivity (Se)': 1.0, 'Specificity (Sp)': 1.0}
+Epoch 9/50 - Task 1: Train Loss: 0.0014, Val Loss: 0.0002
+  Precision: 1.0000, Recall: 1.0000, F1: 1.0000
+  {'AUC': 1.0, 'AUC_95CI': '1.000 (1.000-1.000)', 'Sensitivity (Se)': 1.0, 'Specificity (Sp)': 1.0}
+Epoch 10/50 - Task 1: Train Loss: 0.0010, Val Loss: 0.0002
+  Precision: 1.0000, Recall: 1.0000, F1: 1.0000
+  {'AUC': 1.0, 'AUC_95CI': '1.000 (1.000-1.000)', 'Sensitivity (Se)': 1.0, 'Specificity (Sp)': 1.0}
+Early stopping at epoch 10
+单任务 1 模型保存至: C:/Users/莫冰/Desktop/test/single_task_1_model.pth
+单任务 1 结果保存至: C:/Users/莫冰/Desktop/test/single_task_1_metrics.csv
+
+--- 单任务 2 训练开始 ---
+Epoch 1/50 - Task 2: Train Loss: 0.9344, Val Loss: 0.6982
+  Precision: 0.4951, Recall: 0.4964, F1: 0.4602
+  {'AUC': 0.5295792143263807, 'AUC_95CI': '0.530 (0.468-0.596)', 'Sensitivity (Se)': 0.23741007194244604, 'Specificity (Sp)': 0.7553956834532374}
+Epoch 2/50 - Task 2: Train Loss: 0.9152, Val Loss: 0.6948
+  Precision: 0.5337, Recall: 0.5324, F1: 0.5276
+  {'AUC': 0.5268360850887636, 'AUC_95CI': '0.527 (0.459-0.592)', 'Sensitivity (Se)': 0.4316546762589928, 'Specificity (Sp)': 0.6330935251798561}
+Epoch 3/50 - Task 2: Train Loss: 0.8269, Val Loss: 0.6899
+  Precision: 0.5360, Recall: 0.5360, F1: 0.5359
+  {'AUC': 0.5450028466435485, 'AUC_95CI': '0.545 (0.478-0.609)', 'Sensitivity (Se)': 0.5251798561151079, 'Specificity (Sp)': 0.5467625899280576}
+Epoch 4/50 - Task 2: Train Loss: 0.8295, Val Loss: 0.6876
+  Precision: 0.5266, Recall: 0.5252, F1: 0.5188
+  {'AUC': 0.5477977330365923, 'AUC_95CI': '0.548 (0.478-0.619)', 'Sensitivity (Se)': 0.41007194244604317, 'Specificity (Sp)': 0.6402877697841727}
+Epoch 5/50 - Task 2: Train Loss: 0.7920, Val Loss: 0.6857
+  Precision: 0.5296, Recall: 0.5288, F1: 0.5255
+  {'AUC': 0.547280161482325, 'AUC_95CI': '0.547 (0.478-0.613)', 'Sensitivity (Se)': 0.4460431654676259, 'Specificity (Sp)': 0.6115107913669064}
+Epoch 6/50 - Task 2: Train Loss: 0.8214, Val Loss: 0.6832
+  Precision: 0.5258, Recall: 0.5252, F1: 0.5222
+  {'AUC': 0.5519383054707314, 'AUC_95CI': '0.552 (0.478-0.620)', 'Sensitivity (Se)': 0.4460431654676259, 'Specificity (Sp)': 0.60431654676259}
+Epoch 7/50 - Task 2: Train Loss: 0.7615, Val Loss: 0.6816
+  Precision: 0.5660, Recall: 0.5647, F1: 0.5627
+  {'AUC': 0.59225712954816, 'AUC_95CI': '0.592 (0.526-0.661)', 'Sensitivity (Se)': 0.49640287769784175, 'Specificity (Sp)': 0.6330935251798561}
+Epoch 8/50 - Task 2: Train Loss: 0.7741, Val Loss: 0.6787
+  Precision: 0.5615, Recall: 0.5576, F1: 0.5504
+  {'AUC': 0.6068526473785001, 'AUC_95CI': '0.607 (0.535-0.672)', 'Sensitivity (Se)': 0.4316546762589928, 'Specificity (Sp)': 0.6834532374100719}
+Epoch 9/50 - Task 2: Train Loss: 0.7713, Val Loss: 0.6845
+  Precision: 0.5494, Recall: 0.5396, F1: 0.5155
+  {'AUC': 0.5847523420112831, 'AUC_95CI': '0.585 (0.525-0.655)', 'Sensitivity (Se)': 0.31654676258992803, 'Specificity (Sp)': 0.762589928057554}
+Epoch 10/50 - Task 2: Train Loss: 0.7477, Val Loss: 0.6891
+  Precision: 0.5372, Recall: 0.5324, F1: 0.5167
+  {'AUC': 0.5619791936235184, 'AUC_95CI': '0.562 (0.494-0.632)', 'Sensitivity (Se)': 0.35251798561151076, 'Specificity (Sp)': 0.7122302158273381}
+Epoch 11/50 - Task 2: Train Loss: 0.7692, Val Loss: 0.6889
+  Precision: 0.5325, Recall: 0.5288, F1: 0.5149
+  {'AUC': 0.5526629056467056, 'AUC_95CI': '0.553 (0.480-0.622)', 'Sensitivity (Se)': 0.3597122302158273, 'Specificity (Sp)': 0.697841726618705}
+Epoch 12/50 - Task 2: Train Loss: 0.7481, Val Loss: 0.6858
+  Precision: 0.5293, Recall: 0.5288, F1: 0.5266
+  {'AUC': 0.5610475648258372, 'AUC_95CI': '0.561 (0.491-0.632)', 'Sensitivity (Se)': 0.460431654676259, 'Specificity (Sp)': 0.5971223021582733}
+Epoch 13/50 - Task 2: Train Loss: 0.7533, Val Loss: 0.6878
+  Precision: 0.5454, Recall: 0.5432, F1: 0.5374
+  {'AUC': 0.5501268050307955, 'AUC_95CI': '0.550 (0.481-0.611)', 'Sensitivity (Se)': 0.4316546762589928, 'Specificity (Sp)': 0.6546762589928058}
+Early stopping at epoch 13
+单任务 2 模型保存至: C:/Users/莫冰/Desktop/test/single_task_2_model.pth
+单任务 2 结果保存至: C:/Users/莫冰/Desktop/test/single_task_2_metrics.csv
+所有单任务结果保存至: C:/Users/莫冰/Desktop/test/all_single_task_diagnostic_metrics.csv
+   Task_ID             AUC_95CI        Se        Sp
+0        0  0.900 (0.864-0.936)  0.813333  0.933628
+1        1  1.000 (1.000-1.000)  1.000000  1.000000
+2        2  0.550 (0.481-0.611)  0.431655  0.654676
+=== 单任务模型训练结束 ===
